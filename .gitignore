@@ -1,0 +1,26 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rdata
+.httr-oauth
+.DS_Store
+nul
+
+/.quarto/
+.quarto
+
+**/*.quarto_ipynb
+
+# Claude Code
+.claude/
+
+# API keys
+.google_api_key
+
+# Large data files (exceed GitHub 100MB limit)
+data/sample/db_*.csv
+data/sample/sample_count.csv
+data/sample_casestudy/wifi_uou20.csv
+data/sample_casestudy/output/stay_raw.csv
+data/tutorial/sample_count.csv

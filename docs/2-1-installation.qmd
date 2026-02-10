@@ -1,0 +1,159 @@
+---
+number-sections: true
+number-depth: 2
+---
+
+
+# Installation
+
+This chapter prepares the hardware and software for a WiFi sensor. After assembling the **components**, you will install the **operating system** and establish **remote access** to the Pi via SSH. A **troubleshooting** section at the end covers common setup issues.
+
+::: {.callout-note}
+Screenshots were captured with Raspberry Pi OS Bullseye (2022). The current Bookworm release may have slightly different interfaces, but the overall process remains the same.
+:::
+
+## Components
+
+The WiFi sensor consists of a single-board computer, a wireless adapter for packet capture, and supporting peripherals for power and storage:
+
+![](materials/ch2/sensor_comp.png)
+
+The core components are:
+
+- **Raspberry Pi**: A single-board computer, Model 3 or newer, that serves as the main computing unit.
+- **WiFi adapter**: An external USB adapter with monitor mode support for passive packet capture. The Pi's built-in WiFi can also enter monitor mode but may overheat during extended sessions.
+- **Micro SD card**: A storage device of 16GB or larger for the operating system and captured data.
+- **Ethernet cable**: A cable for connecting the Pi to your computer for initial SSH access.
+- **Portable power bank**: A battery pack of 20,000mAh or higher for outdoor deployment.
+
+Additional sensors such as cameras or environmental monitors can be added for extended data collection.
+
+## Operating System
+
+### Download the Pi Imager
+
+Download the Raspberry Pi Imager from the [official website](https://www.raspberrypi.com/software/) and install it on your computer.
+
+![](materials/ch2/raspi_imager.png)
+
+### Format the SD Card
+
+Insert an SD card, launch the Imager, click `CHOOSE OS`, select `Erase`, then `Format SD Card`.
+
+![](materials/ch2/format_SD.mp4)
+
+### Flash the OS
+
+With the SD card formatted, install Raspberry Pi OS:
+
+1. **Choose the OS**: Click `CHOOSE OS` and select Raspberry Pi OS.
+2. **Choose the SD Card**: Select your SD card from the list.
+3. **Enable SSH**: Required for remote access.
+4. **Set Username and Password**: Default is `pi` / `raspberry`. Change after setup for security.
+5. **Configure Wireless LAN**: Enter your mobile hotspot credentials for time synchronization at boot.
+6. **Write**: Click `WRITE` to flash the OS.
+
+![](materials/ch2/write_SD.mp4)
+
+Once complete, insert the SD card into the Pi to boot.
+
+::: {.callout-note collapse=true}
+## Why use a mobile hotspot?
+
+The Raspberry Pi has no real-time clock and needs internet access at boot to synchronize time. A mobile hotspot provides this connection reliably during field deployment.
+
+![](materials/ch2/mobile_hotspot.png){width="50%"}
+:::
+
+## Remote Access
+
+Choose a connection method based on your setup:
+
+![](materials/ch2/choose_remote.png){width="85%"}
+
+- **Option A (Ethernet):** For desktops without WiFi. See @sec-way1.
+- **Option B (Mobile Hotspot):** For laptops with WiFi. See @sec-way2.
+
+### Option A: Ethernet Cable {#sec-way1}
+
+Connect your Pi to your computer using an Ethernet cable.
+
+![](materials/ch2/connect_pi.jpg)
+
+In your network settings, enable `Internet Connection Sharing`.
+
+![](materials/ch2/share_network.mp4)
+
+Open Command Prompt (`Ctrl + R`, type `cmd`, Enter) and connect via SSH:
+
+```bash
+ssh pi@raspberrypi
+```
+
+![](materials/ch2/access_cmd.mp4)
+
+### Option B: Mobile Hotspot {#sec-way2}
+
+Enable your mobile hotspot with the same credentials you entered when flashing the SD card.
+
+![](materials/ch2/hotspot_default.jpg){width="50%"}
+
+Insert the SD card into the Pi and connect power.
+
+![](materials/ch2/plug_pi_wifi.jpg)
+
+Connect your laptop to the same hotspot.
+
+![](materials/ch2/laptop_wifi.png){width="50%"}
+
+Both devices should appear in your hotspot interface. Open Command Prompt and connect via SSH:
+
+```bash
+ssh pi@raspberrypi
+```
+
+![](materials/ch2/ssh_laptop.mp4)
+
+### Verify Internet Connectivity
+
+Test the Pi's internet connection:
+
+```bash
+ping 8.8.8.8
+```
+
+A successful connection shows `64 bytes from 8.8.8.8`. Press `Ctrl + C` to stop.
+
+![](materials/ch2/cmd_ping.mp4)
+
+## Troubleshooting
+
+### Network Connection Error
+
+If you cannot access the Pi, try toggling your network adapter off and on, re-enabling Internet Connection Sharing, or checking the Ethernet connection.
+
+![](materials/ch2/error_network.mp4)
+
+### Finding the Pi's IP Address
+
+When connecting to multiple Pis, you need specific IP addresses. Run `arp -a` in Command Prompt to list devices. Raspberry Pi MAC addresses start with `B8:27:EB` or `DC:A6:32`.
+
+![](materials/ch2/access_with_mac.mp4)
+
+### SSH Key Warning
+
+This error appears after reinstalling the OS or changing SSH keys:
+
+![](materials/ch2/ssh_error.png)
+
+Remove the old key and reconnect:
+
+```bash
+ssh-keygen -R raspberrypi
+```
+
+### Secured Networks
+
+University or corporate networks may require MAC address registration. Contact your IT administrator.
+
+![](materials/ch2/network_unist.png){width=500}

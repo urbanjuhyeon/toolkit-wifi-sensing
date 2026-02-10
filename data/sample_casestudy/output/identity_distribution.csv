@@ -1,0 +1,7 @@
+street_type,visitor_type,N,pct
+Regular,Regular,12407,16.5
+Regular,One-time,43871,58.5
+Regular,Occasional,18705,24.9
+Pedestrian,Regular,7128,12.8
+Pedestrian,One-time,34716,62.2
+Pedestrian,Occasional,13948,25

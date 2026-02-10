@@ -1,0 +1,213 @@
+---
+number-sections: true
+number-depth: 2
+---
+
+# Configuration
+
+This chapter configures the Pi for data collection. You will update the **system**, set up a **file server** for easy data transfer, connect to **cloud storage** for remote monitoring, and install the **capture scripts**.
+
+## System Setup
+
+Start by updating the operating system to ensure all packages are current:
+
+```bash
+sudo apt-get update -y && sudo apt-get upgrade -y
+```
+
+::: {.callout-note collapse="true"}
+## Copy and paste in the terminal
+Click the copy icon next to code blocks. If `Ctrl+V` doesn't work, try `Ctrl+Shift+V` or right-click.
+:::
+
+![](materials/ch2/initial_update.mp4)
+
+Restart the Pi to apply the updates, then enter superuser mode for the remaining configuration tasks:
+
+```bash
+sudo reboot
+```
+
+```bash
+sudo su
+```
+
+## File Server
+
+Samba enables file sharing between the Pi and your computer over Ethernet. Once configured, you can drag and drop files directly through your file explorer.
+
+### Install and Configure
+
+Install Samba and its dependencies:
+
+```bash
+sudo apt-get install -y -q samba samba-common-bin
+```
+
+![](materials/ch2/install_samba.png)
+
+Open the configuration file to define the shared folder:
+
+```bash
+sudo nano /etc/samba/smb.conf
+```
+
+Move to the end of the file with `Alt + /` and add the following block:
+
+```ini
+[share]
+path = /home/pi
+writeable=Yes
+create mask=0777
+directory mask=0777
+public=no
+```
+
+![](materials/ch2/samba_setting.png)
+
+Save with `Ctrl + X`, then `Y`, then `Enter`.
+
+Set a password for the share. Enter `raspberry` when prompted:
+
+```bash
+sudo smbpasswd -a pi
+```
+
+Restart both Samba services to apply the changes:
+
+```bash
+sudo service smbd restart && sudo service nmbd restart
+```
+
+### Test the Connection
+
+On your computer, open File Explorer (`Win + E`) and navigate to `\\raspberrypi\share`. Enter the Pi's username and password when prompted.
+
+![](materials/ch2/samba_access.mp4)
+
+Create a test file on the Pi:
+
+```bash
+sudo nano test.txt
+```
+
+Type any text, save the file, and verify it appears in your File Explorer.
+
+![](materials/ch2/samba_check.mp4)
+
+## Cloud Storage
+
+Cloud storage allows you to monitor the Pi's status remotely without connecting a monitor or keyboard. The Pi can upload status updates to Dropbox, which you can check from any device.
+
+### Create a Dropbox App
+
+Go to the [Dropbox developer page](https://www.dropbox.com/developers/), sign in, and create a new application.
+
+![](materials/ch2/dropbox_create.png)
+
+Enable all file permissions under the individual scope.
+
+![](materials/ch2/dropbox_permission.png)
+
+### Install the Uploader
+
+Install the required packages and clone the Dropbox Uploader repository:
+
+```bash
+sudo apt install curl git -y
+git clone https://github.com/andreafabrizi/Dropbox-Uploader.git
+```
+
+Navigate to the directory and make the script executable:
+
+```bash
+cd Dropbox-Uploader && sudo chmod +x dropbox_uploader.sh
+```
+
+Run the script to begin authentication:
+
+```bash
+./dropbox_uploader.sh
+```
+
+Enter your app key and app secret when prompted.
+
+![](materials/ch2/dropbox_register1.png)
+
+Open the provided URL in a browser and click Allow to authorize the app.
+
+![](materials/ch2/dropbox_register2.png)
+
+Copy the access code and paste it back into the terminal.
+
+![](materials/ch2/dropbox_register3.png)
+
+### Verify Access
+
+Test the connection by uploading a file to your Dropbox:
+
+```bash
+./dropbox_uploader.sh upload README.md /
+```
+
+The file should appear in your Dropbox app folder.
+
+![](materials/ch2/test_dropbox_upload.mp4)
+
+Return to the home directory before continuing:
+
+```bash
+cd /home/pi
+```
+
+## Capture Scripts
+
+The capture scripts handle WiFi packet collection. Clone the repository from GitHub:
+
+```bash
+cd /home/pi
+git clone https://github.com/urbanjuhyeon/urban-sensing-raspi.git
+```
+
+![](materials/ch2/clone_raspi.png)
+
+### Install Packages
+
+Navigate to the repository and run the package installation script:
+
+```bash
+cd /home/pi/urban-sensing-raspi
+bash packages.sh
+```
+
+![](materials/ch2/bash_packages.mp4)
+
+### Set the Sensor Name
+
+Each sensor needs a unique name for identification in your data. Run the naming script and enter a name when prompted:
+
+```bash
+bash name.sh
+```
+
+The name is stored in `sensor_name.conf`. If skipped, the default `raspberrypi` is used.
+
+![](materials/ch2/bash_naming.mp4)
+
+### Configure Network Interfaces
+
+Check the current network interface assignment with `ifconfig`. The internal WiFi adapter should be `wlan0`, while external adapters receive different names.
+
+```bash
+ifconfig
+```
+
+![](materials/ch2/ifconfig_wlan0.png)
+
+Run the environment script to ensure consistent interface naming at boot:
+
+```bash
+bash envr.sh
+```
+
+![](materials/ch2/bash_envr.mp4)

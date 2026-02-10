@@ -1,0 +1,140 @@
+# Limitations and Future Directions {#sec-conclusion}
+
+This toolkit demonstrates a complete WiFi sensing pipeline—from hardware deployment to urban metrics. However, several limitations affect data quality and interpretation. This chapter addresses them directly, particularly MAC address randomization, and outlines future directions for the field.
+
+
+## Limitations
+
+### MAC Address Randomization
+
+**This is the most significant limitation.** Modern smartphones randomize MAC addresses to protect user privacy. Apple introduced randomization in iOS 8 (2014), and Android followed in version 10 (2019). By 2020, most new devices broadcast random MACs by default.
+
+Our campus data was collected in **October–November 2019**, during the transition period:
+- Some devices still used persistent (real) MACs
+- Others had already adopted randomization
+- The proportion of randomized vs. persistent MACs is unknown
+
+**Impact on metrics:**
+
+| Metric | Affected? | How |
+|--------|-----------|-----|
+| Location | Minimal | Single-detection positioning still works |
+| Count | Moderate | Randomized MACs inflate unique device counts |
+| Track | Moderate | Trajectories may fragment when MAC changes |
+| Identity | Severe | Cannot reliably identify returning visitors |
+| Activities | Moderate | Stay detection within single trajectory works; cross-session analysis breaks |
+
+**What we can still measure:**
+- **Instantaneous density**: How many devices are detected *right now* at a location
+- **Flow patterns**: Aggregate movement between sensors within short time windows
+- **Temporal rhythms**: When spaces are busy vs. quiet
+- **Relative comparisons**: Which locations attract more activity than others
+
+**What becomes unreliable:**
+- Absolute unique visitor counts over time
+- Individual-level return visit patterns
+- Long-term behavioral profiling
+
+This limitation is not unique to our toolkit—it affects all passive WiFi sensing systems deployed after 2015. The field has largely pivoted to aggregate, anonymous metrics rather than individual tracking.
+
+
+### Sensor Coverage Gaps
+
+WiFi sensors detect devices within a limited range (~30–50 meters outdoors, less indoors). Areas between sensors are unobserved, creating coverage gaps. This affects:
+
+- **Trajectory completeness**: Paths through unmonitored areas appear as gaps
+- **Activity detection**: Stays in uncovered locations are missed
+- **Spatial resolution**: We observe sensor locations, not exact device positions
+
+The campus deployment used 25 sensors across ~0.5 km², providing reasonable but incomplete coverage of main circulation paths and activity centers.
+
+
+### Temporal Resolution
+
+Our sensors logged detections at 1-second intervals, but WiFi probe requests are sporadic—devices don't broadcast continuously. Detection gaps of 1–5 minutes are common even when devices remain stationary. This affects:
+
+- **Precise timing**: Entry/exit times have ~minute-level uncertainty
+- **Short activities**: Stays under 3 minutes may be missed or misclassified
+- **Movement speed**: Velocity estimates are approximate
+
+
+### Ground Truth Limitations
+
+We validated location accuracy using 107 GPS ground truth points collected over 8 hours. While this confirms the basic approach works, it represents a small sample of controlled conditions. Real-world accuracy may vary with:
+
+- Crowd density (signal interference)
+- Weather conditions
+- Building materials and geometry
+- Device heterogeneity
+
+
+### Privacy and Ethics
+
+WiFi sensing captures device identifiers without explicit consent. While we hash all MAC addresses (SHA-256) before analysis, ethical concerns remain:
+
+- **Informed consent**: Passersby don't know they're being sensed
+- **De-anonymization risk**: Movement patterns could theoretically re-identify individuals
+- **Regulatory compliance**: GDPR, CCPA, and similar laws may restrict deployment
+
+Our approach—hashing, aggregation, no individual profiles—aligns with privacy-preserving practices, but researchers should consult local regulations before deployment.
+
+
+## Future Directions
+
+### Adapting to Randomization
+
+MAC randomization is now universal. Future WiFi sensing must embrace this reality:
+
+1. **Aggregate-only metrics**: Focus on counts, flows, and densities rather than individual tracking
+2. **Short-window analysis**: Analyze patterns within single sessions (typically 15–30 minutes before MAC rotation)
+3. **Complementary data fusion**: Combine WiFi with other sensors (Bluetooth, cameras, surveys) for richer context
+4. **Statistical correction**: Develop models to estimate true visitor counts from inflated randomized counts
+
+Recent research suggests randomization patterns contain exploitable structure (timing, sequence numbers) that may allow session linking without violating privacy. This remains an active research area.
+
+
+### Hardware Improvements
+
+The Raspberry Pi platform used here is accessible but limited:
+
+- **Multi-channel scanning**: Current setup monitors one WiFi channel; multi-adapter setups could capture more devices
+- **Directional antennas**: Could improve spatial resolution and range
+- **Edge processing**: On-device aggregation could reduce data volume and enhance privacy
+- **Power optimization**: Solar or battery operation would enable truly remote deployments
+
+
+### Software Extensions
+
+This toolkit provides foundational metrics. Extensions could include:
+
+- **Real-time dashboards**: Live visualization of space usage
+- **Anomaly detection**: Automatic flagging of unusual patterns
+- **Predictive models**: Forecasting crowd levels from historical patterns
+- **API integration**: Connecting to building management or transit systems
+
+
+### Validation Methods
+
+Better ground truth is needed:
+
+- **Automated validation**: Using entry counters, turnstiles, or cameras
+- **Controlled experiments**: Lab studies with known device populations
+- **Cross-validation**: Comparing WiFi estimates with survey or census data
+
+
+## Summary
+
+WiFi sensing offers a low-cost, scalable approach to measuring human activity in urban spaces. This toolkit demonstrates the complete pipeline: building sensors, processing data, and extracting five urban metrics—Location, Count, Track, Identity, and Activities.
+
+The approach works best for:
+- Understanding temporal patterns of space usage
+- Comparing relative activity levels between locations
+- Detecting aggregate flows and movement patterns
+- Rapid, low-cost deployment in diverse settings
+
+It works less well for:
+- Precise individual tracking (due to MAC randomization)
+- Absolute visitor counts (without calibration)
+- Fine-grained spatial positioning (compared to GPS or UWB)
+
+Despite limitations, passive WiFi sensing remains valuable for urban research. The key is matching the method to appropriate questions—aggregate patterns rather than individual behaviors—and being transparent about what the data can and cannot tell us.

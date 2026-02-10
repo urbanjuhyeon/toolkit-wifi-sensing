@@ -1,0 +1,48 @@
+# Introduction {.unnumbered}
+
+This book provides a complete guide to building and using WiFi sensors for measuring pedestrian activity in urban environments. It covers hardware setup, data processing, and extracting five key metrics: location, count, track, identity, and activities.
+
+## Why WiFi Sensing?
+
+![WiFi sensing concept: sensors mounted on buildings detect probe requests broadcast by WiFi-enabled devices carried by pedestrians.](materials/ch1/wifi-sensing-concept.png)
+
+Quantifying pedestrian traffic is essential for urban planning, public safety, and sustainable city development. Traditional methods---manual counts or surveys---are labor-intensive and provide only snapshots. WiFi sensing offers continuous, non-invasive monitoring by detecting probe requests that WiFi-enabled devices broadcast regularly to discover nearby networks.
+
+Most pedestrians carry smartphones or other WiFi devices. Each device's probe request includes a MAC address, enabling sensors to detect presence, estimate location, and track movement across multiple sensors. This passive approach requires no participation from pedestrians, making it practical for monitoring public spaces at scale.
+
+Recent urban sensing initiatives---such as the [Array of Things in Chicago](https://arrayofthings.github.io/) and [S-DoT in Seoul](https://github.com/seoul-iotdata/S-DoT_SampleData)---demonstrate the growing interest in sensor-based urban analytics. This book makes WiFi sensing accessible to researchers, planners, and practitioners using affordable, off-the-shelf components.
+
+
+## Passive vs Active WiFi Sensing
+
+![](materials/ch1/wifi-sensing-types.png)
+
+WiFi-based location sensing takes two forms:
+
+**Passive sensing** answers *"Where is the device?"* Sensors (sniffers) receive probe requests broadcast by nearby devices. The device holder doesn't need to do anything---their phone automatically sends these packets. Detection range is typically 30--100 meters outdoors. This book focuses on passive sensing for pedestrian monitoring.
+
+**Active sensing** answers *"Where am I?"* from the device's perspective. The device scans for nearby access points and sends the data to a server for location estimation. This requires user consent and an installed app, making it impractical for monitoring public spaces.
+
+Passive sensing trades individual-level precision for scalability. It captures aggregate patterns---when and where people concentrate, how they move through space---without requiring consent from every passerby.
+
+
+## What This Book Covers
+
+| Part | Content |
+|------|---------|
+| **Hardware** | Building WiFi sensors with Raspberry Pi, configuring monitor mode, deploying in the field |
+| **Data Processing** | Aggregating raw packets, cleaning data, handling timestamps and sensor IDs |
+| **Metrics** | Five urban analytics metrics: Location, Count, Track, Identity, Activities |
+| **Limitations** | MAC randomization, coverage gaps, privacy considerations |
+
+
+## References
+
+::: {#refs}
+:::
+
+[^1]: Duives, D. C., van Oijen, T., & Hoogendoorn, S. P. (2020). Enhancing Crowd Monitoring System Functionality through Data Fusion. *Sensors*, 20(21). https://doi.org/10.3390/s20216032
+
+[^2]: Soundararaj, B., Cheshire, J., & Longley, P. (2019). Estimating real-time high-street footfall from Wi-Fi probe requests. *IJGIS*, 34(2), 325-343. https://doi.org/10.1080/13658816.2019.1587616
+
+[^3]: Zhou, Y., et al. (2020). Understanding Crowd Behaviors in a Social Event by Passive WiFi Sensing and Data Mining. *IEEE IoT Journal*. https://doi.org/10.1109/jiot.2020.2972062

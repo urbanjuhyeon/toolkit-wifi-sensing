@@ -1,0 +1,262 @@
+---
+number-sections: true
+number-depth: 2
+---
+
+# Aggregation
+
+WiFi-enabled devices continuously broadcast **probe requests**—sometimes multiple times per second—to discover nearby networks. A single smartphone can generate **thousands of packets per hour**. Before analysis, this raw stream must be filtered and compressed into meaningful records.
+
+This chapter covers the **aggregation pipeline**: loading raw packets from the database, filtering by time, frame type, and signal strength, then grouping into time intervals. The result is a cleaned dataset where each row represents one device detected at one sensor during one time interval.
+
+```{mermaid}
+%%| fig-cap: "From raw packets to aggregated records"
+%%| fig-align: center
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e8f4f8', 'primaryTextColor': '#1a1a1a', 'primaryBorderColor': '#5c9ead', 'lineColor': '#5c9ead', 'secondaryColor': '#f0f7e6', 'tertiaryColor': '#fff5e6'}}}%%
+flowchart LR
+    A[Raw Packets<br/>SQLite3] -->|load| B[Filter]
+
+    subgraph B[Filtering]
+        direction TB
+        F1[Time Window] --> F2[Frame Type] --> F3[Signal Strength]
+    end
+
+    B -->|aggregate| C[1-Second<br/>Intervals]
+    C -->|save| D[CSV]
+
+    style A fill:#e8f4f8,stroke:#5c9ead
+    style B fill:#f0f7e6,stroke:#7cb342
+    style C fill:#fff5e6,stroke:#f9a825
+    style D fill:#fce4ec,stroke:#c2185b
+```
+
+## Database Overview
+
+The WiFi data is stored in an SQLite3 database—a portable, file-based format. You can inspect its structure using [DB Browser for SQLite](https://sqlitebrowser.org/).
+
+![](materials/ch3/sqlite3_browser.png)
+
+The `packets` table contains the following attributes:
+
+| Attribute | Description |
+|-----------|-------------|
+| `timestamp` | Date and time when the packet was captured |
+| `type` | Packet category (e.g., "Management") |
+| `subtype` | Specific packet type (e.g., "Probe Request") |
+| `strength` | Signal strength in dBm; lower values indicate weaker signals |
+| `source_address` | Hashed MAC address of the sending device |
+| `source_address_randomized` | Whether the source address is randomized (1) or not (0) |
+| `destination_address` | Hashed MAC address of the intended recipient |
+| `access_point_name` | SSID of the target access point |
+| `sequence_number` | Unique identifier for ordering packets |
+| `channel` | WiFi channel on which the packet was transmitted |
+| `sensor_name` | Identifier of the sensor that captured the packet |
+
+## Load and Process in R
+
+::: {.callout-note title="Sample data"}
+Download [sample_raw.zip](../data/tutorial/sample_raw.zip) if you don't have your own data.
+:::
+
+### Install Packages
+
+`pacman::p_load()` installs missing packages and loads them in one step.
+
+```{r}
+#| message: false
+#| warning: false
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(RSQLite, DBI, data.table, lubridate, knitr)
+```
+
+- `RSQLite` and `DBI`: Connect to SQLite databases
+- `data.table`: Fast data manipulation
+- `lubridate`: Parse and manipulate timestamps
+- `knitr`: Format tables for display
+
+::: {.callout-note collapse="true"}
+## Why data.table instead of tidyverse?
+
+Raw WiFi data often contains millions of rows. `data.table` is significantly faster and more memory-efficient than `dplyr` for large datasets, making it the preferred choice for this workflow.
+:::
+
+### Connect and Query
+
+Connect to the database, query all packets, and convert the result to a `data.table`.
+
+```{r, eval = FALSE}
+conn <- dbConnect(SQLite(), "path/to/your/database.sqlite")
+wifi_data <- dbGetQuery(conn, "SELECT * FROM packets")
+wifi_data <- as.data.table(wifi_data)
+```
+
+```{r}
+#| echo: false
+conn <- dbConnect(SQLite(), "../data/tutorial/sample_1.sqlite3")
+wifi_data <- dbGetQuery(conn, "SELECT sensor_name, timestamp, type, subtype, strength AS rssi, source_address, source_address_randomized FROM packets")
+wifi_data <- as.data.table(wifi_data)
+```
+
+Here are the first few rows:
+
+```{r, echo = FALSE}
+kable(head(wifi_data, 5))
+```
+
+### Filter by Time
+
+Subset the data to your **period of interest**. Here we extract a 3-minute window:
+
+```{r}
+start_date <- ymd_hms("2024-04-09 19:17:00")
+end_date <- ymd_hms("2024-04-09 19:20:00")
+
+wifi_data_filtered_time <- wifi_data[
+  between(ymd_hms(timestamp), start_date, end_date)
+]
+```
+
+### Filter by Frame Type
+
+WiFi packets include both requests (sent by devices) and responses (sent by access points). For pedestrian sensing, we keep only **probe requests**—these indicate the presence of a mobile device. Responses come from fixed infrastructure and are not useful here.
+
+```{r}
+wifi_data_filtered_frame <- wifi_data_filtered_time[!grepl("response", subtype)]
+```
+
+::: {.callout-note collapse="true"}
+## Frame type distribution
+
+Probe requests are a small fraction of all WiFi traffic. The table below shows frame type distribution from a month-long campus deployment—probe requests account for only 2.6% of packets, while responses and data frames dominate:
+
+| Type | Subtype | Count | Proportion |
+|------|---------|-------|------------|
+| Management | probe-request | 714,353 | 2.6% |
+| Management | probe-response | 9,532,383 | 35.3% |
+| Management | authentication | 352,856 | 1.3% |
+| Data | null | 8,716,923 | 32.3% |
+| Data | qos-data | 4,875,257 | 18.1% |
+| Data | qos-null | 2,253,010 | 8.4% |
+:::
+
+### Filter by Signal Strength
+
+Signal strength (RSSI) indicates how close a device is to the sensor. We keep packets between **-80 and -30 dBm** to focus on **nearby pedestrians**. Signals weaker than -80 dBm are too distant or unreliable. Signals stronger than -30 dBm likely come from devices placed directly on the sensor rather than passersby.
+
+```{r}
+wifi_data_filtered_strength <- wifi_data_filtered_frame[between(rssi, -80, -30)]
+```
+
+### Aggregate by Interval
+
+A single device may transmit dozens of packets per second. We collapse these into **one record per device per second**, keeping the **median signal strength** and **packet count**.
+
+```{r}
+wifi_data_filtered_strength[, timestamp := floor_date(ymd_hms(timestamp), unit = "second")]
+
+aggregated_data <- wifi_data_filtered_strength[, .(
+  median_rssi = median(rssi),
+  count = .N
+), by = .(sensor_name, source_address, source_address_randomized, timestamp)]
+
+head(aggregated_data)
+```
+
+### Save and Close
+
+Export the aggregated data to CSV and close the database connection.
+
+```{r}
+#| eval: false
+fwrite(aggregated_data, "../data/tutorial/aggregated_sample_1.csv")
+dbDisconnect(conn)
+```
+
+## Pipeline Summary
+
+Each step reduces the data volume. In this 3-minute sample, filtering cuts the packet count from 11,490 to 2,904—a 75% reduction. The frame type filter has the largest effect, removing probe responses that outnumber requests. Aggregation then compresses 2,904 packets into 522 interval records while preserving all 112 unique devices.
+
+```{r}
+#| echo: false
+conn <- dbConnect(SQLite(), "../data/tutorial/sample_1.sqlite3")
+wifi_data <- dbGetQuery(conn, "SELECT sensor_name, timestamp, type, subtype, strength AS rssi, source_address, source_address_randomized FROM packets")
+setDT(wifi_data)
+wifi_data_filtered_time <- wifi_data[between(ymd_hms(timestamp), start_date, end_date)]
+wifi_data_filtered_frame <- wifi_data_filtered_time[!grepl("response", subtype)]
+wifi_data_filtered_strength <- wifi_data_filtered_frame[between(rssi, -80, -30)]
+wifi_data_filtered_strength[, timestamp := floor_date(ymd_hms(timestamp), unit = "second")]
+aggregated_data <- wifi_data_filtered_strength[, .(median_rssi = median(rssi), count = .N), by = .(sensor_name, source_address, source_address_randomized, timestamp)]
+dbDisconnect(conn)
+```
+
+```{r}
+summary_table <- data.table(
+  Step = c("Initial", "After Time Filter", "After Frame Filter", "After Strength Filter", "After Aggregation"),
+  Packets = c(nrow(wifi_data), nrow(wifi_data_filtered_time), nrow(wifi_data_filtered_frame), nrow(wifi_data_filtered_strength), nrow(aggregated_data)),
+  Unique_Devices = c(
+    length(unique(wifi_data$source_address)),
+    length(unique(wifi_data_filtered_time$source_address)),
+    length(unique(wifi_data_filtered_frame$source_address)),
+    length(unique(wifi_data_filtered_strength$source_address)),
+    length(unique(aggregated_data$source_address))
+  )
+)
+
+print(summary_table)
+```
+
+## Automate the Pipeline
+
+Processing files manually is impractical—real deployments generate **one database file per sensor per day**. This section wraps the pipeline into a reusable function that can process multiple files at once.
+
+### Single Database
+
+The `aggregate_data()` function takes a database path, time range, and aggregation interval, then writes the result to a CSV file.
+
+```{r}
+aggregate_data <- function(db_path, start_date, end_date, interval = "second", output_suffix = "_1second.csv") {
+  conn <- dbConnect(SQLite(), db_path)
+
+  wifi_data <- dbGetQuery(conn, "SELECT sensor_name, timestamp, type, subtype, strength AS rssi, source_address, source_address_randomized FROM packets")
+  setDT(wifi_data)
+
+  wifi_data <- wifi_data[between(ymd_hms(timestamp), start_date, end_date)]
+  wifi_data <- wifi_data[!grepl("response", subtype)]
+  wifi_data <- wifi_data[between(rssi, -80, -30)]
+
+  wifi_data[, timestamp := floor_date(ymd_hms(timestamp), unit = interval)]
+  aggregated_data <- wifi_data[, .(median_rssi = median(rssi), count = .N), by = .(sensor_name, source_address, source_address_randomized, timestamp)]
+
+  output_path <- sub("\\.sqlite3$", output_suffix, db_path)
+  fwrite(aggregated_data, output_path)
+
+  dbDisconnect(conn)
+}
+```
+
+Run on a single file:
+
+```{r}
+#| eval: false
+start_date <- ymd_hms("2024-04-09 19:17:00")
+end_date <- ymd_hms("2024-04-09 19:20:00")
+
+aggregate_data("../data/tutorial/sample_1.sqlite3", start_date, end_date, interval = "second")
+```
+
+### Multiple Databases
+
+Use `purrr::map()` to apply the function across all database files in a folder. Each file produces a corresponding CSV.
+
+```{r}
+#| eval: false
+pacman::p_load(purrr)
+
+db_files <- list.files("../data/tutorial", pattern = "sample_.*\\.sqlite3$", full.names = TRUE)
+print(db_files)
+
+start_date <- ymd_hms("2024-04-09 19:17:00")
+end_date <- ymd_hms("2024-04-09 19:20:00")
+
+map(db_files, ~aggregate_data(.x, start_date, end_date, interval = "second"))
+```

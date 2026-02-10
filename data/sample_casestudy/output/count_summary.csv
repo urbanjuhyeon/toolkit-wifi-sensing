@@ -1,0 +1,3 @@
+street_type,mean_hourly,median_hourly,total,n_sensors,mean_per_sensor
+Regular,1401.38914027149,1511,309707,13,107.799164636269
+Pedestrian,903.86036036036,920.5,200657,7,129.122908622909

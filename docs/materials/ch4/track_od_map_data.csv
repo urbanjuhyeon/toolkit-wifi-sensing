@@ -1,0 +1,6 @@
+origin,destination,n_trips,prob
+cafeteria_dorm_side,TMB_back,4638,0.3122811742526259
+108_front_outside,lake,4243,0.38513206862122173
+104_back,bus_station,4058,0.38131930088329263
+cafeteria_dorm_side,gym_front,2097,0.14119310530568274
+cafeteria_dorm_side,parking_dorm,2081,0.14011580931861028

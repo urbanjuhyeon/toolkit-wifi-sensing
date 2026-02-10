@@ -1,0 +1,45 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "WiFi Sensing Toolkit for Urban Studies"
+  author: Juhyeon Park
+  search: true
+  sidebar:
+    collapse-level: 2
+    pinned: true
+  site-url: https://juhyeonpark.com/wifi-sensing-for-urban-studies/
+  repo-url: https://github.com/urbanjuhyeon/wifi-sensing-for-urban-studies/
+  date: last-modified
+  chapters:
+    - index.qmd
+    - part: "Building the Sensor"
+      chapters:
+        - 2-1-installation.qmd
+        - 2-2-configuration.qmd
+        - 2-3-deployment.qmd
+    - part: "Processing Data"
+      chapters:
+        - 3-1-aggregation.qmd
+        - 3-2-cleaning.qmd
+    - part: "Extracting Metrics"
+      chapters:
+        - 4-1-overview.qmd
+        - 4-2-location.qmd
+        - 4-3-count.qmd
+        - 4-4-track.qmd
+        - 4-5-identity.qmd
+        - 4-6-activities.qmd
+    - 5-casestudy.qmd
+    - 6-conclusion.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: [cosmo, theme.scss]
+    css: custom.css
+    number-depth: 2
+
+editor: source

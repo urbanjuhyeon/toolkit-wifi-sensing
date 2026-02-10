@@ -1,0 +1,48 @@
+# Metrics Overview
+
+We explore how WiFi gives us a snapshot of urban life. It's about identifying where people are (**Location**), counting them (**Count**), tracking their movements (**Track**), recognizing visitor patterns (**Identity**), and understanding their actions (**Activities**). A graphic will illustrate these concepts step by step:
+
+![Overview of WiFi Sensing Metrics: From Pinpointing Locations to Understanding Urban Activities](materials/ch4/metric-overview.png)
+
+### **Location: Where Are People at a Specific Time?** {.unnumbered}
+
+'Location' is determined by analyzing the characteristics of WiFi signals at a given time, such as signal frequency and strength. Depending on the situation, we might assign locations based on sensor positions or estimate them in areas between sensors.
+
+::: {.callout-note title="Why Location Comes Before Count" collapse="true"}
+Before counting, we must pinpoint location. Without knowing where devices are, we just have a total count.
+
+Imagine a room with three people, just like in the diagram above:
+
+- **Without location data,** counting detected device MAC addresses only tells you there are three devices total.
+- **With even rough location data,** you can determine that two devices are on the left and one on the right – providing much richer information.
+:::
+
+### **Count: How Many Over Time?** {.unnumbered}
+
+'Count' focuses on tallying unique MAC addresses to estimate how many people are in an area over different timescales. This method allows for long-term tracking of device presence, offering insights into occupancy trends over extended periods.
+
+### **Track: Where and When Did They Move?** {.unnumbered}
+
+'Track' involves recording when and where phones are detected. This data lets us follow people's movements, highlighting the dynamic patterns of city life and offering insights into how different areas are used throughout the day.
+
+### **Identity: Who Visits Regularly?** {.unnumbered}
+
+With 'Identity', we analyze data over time to recognize regular visitors and understand their movement habits. This metric provides insights into recurring traffic patterns and the behaviors of different user groups within the city.
+
+### **Activities: What Are They Doing?** {.unnumbered}
+
+'Activities' aims to understand actions by analyzing timing and movement data. We look at how people use different city areas—whether they stay or pass through—observing changes in activity patterns at different times and days.
+
+::: {.callout-warning title="A Note on MAC Randomization"}
+Modern mobile devices (iOS since 2014, Android since 2017) randomize their MAC addresses for privacy protection. This affects all metrics to varying degrees:
+
+- **Count** may overestimate if the same person generates multiple MAC addresses
+- **Track** sequences may break when a device changes its MAC mid-journey
+- **Identity** classification over extended periods becomes unreliable
+
+These limitations are most significant in **uncontrolled public spaces**. In **controlled environments** (campuses with authenticated WiFi, events with registered devices), the impact is reduced. We discuss mitigation strategies in each chapter.
+:::
+
+::: {.callout-tip title="Validating with Ground Truth" collapse="true"}
+To assess accuracy, we compare WiFi-derived metrics against ground truth data such as manual counts or GPS logs. Validation methods are discussed in each metric's chapter.
+:::

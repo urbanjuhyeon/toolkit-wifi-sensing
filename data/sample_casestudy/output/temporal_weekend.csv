@@ -1,0 +1,5 @@
+is_weekend,street_type,unique_devices
+TRUE,Regular,43808
+FALSE,Regular,50271
+TRUE,Pedestrian,31537
+FALSE,Pedestrian,37765

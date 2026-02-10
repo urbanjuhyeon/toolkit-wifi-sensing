@@ -1,0 +1,122 @@
+---
+number-sections: true
+number-depth: 2
+---
+
+# Deployment
+
+This chapter covers testing and deploying the WiFi sensing service. You will first **test in a controlled environment**, then **enable the service** to run at boot, and finally **test in the field** without Ethernet.
+
+## Test in Controlled Environment
+
+### Run the Script
+
+Power off the Pi, insert the external WiFi adapter, and power it back on.
+
+![](materials/ch2/pi_plugged.jpg)
+
+Connect via SSH and verify the network interfaces:
+
+```bash
+ifconfig
+```
+
+The internal WiFi should be `wlan0` with a MAC address starting with `b8:27:eb`. External adapters appear as `wlan1`, `wlan2`, etc.
+
+![](materials/ch2/ifconfig_wlan_check.png){width=75%}
+
+Enter superuser mode and run the sensing script:
+
+```bash
+sudo su
+python3 urban-sensing-raspi/code/start.py
+```
+
+Let it run for about 2 minutes, then stop with `Ctrl+C`.
+
+![](materials/ch2/run_script.mp4)
+
+::: {.callout-note collapse="true"}
+## Script options
+
+- `-i`: Retain raw WiFi packets
+- `-b`: Enable Bluetooth sensing
+
+See the [GitHub repository](https://github.com/urbanjuhyeon/urban-sensing-raspi) for all options.
+:::
+
+### Verify the Results
+
+Access the Pi's shared folder by typing `\\raspberrypi\share` in File Explorer.
+
+In the `stats` folder, verify that file names reflect the execution time and that files have been uploaded to Dropbox.
+
+![](materials/ch2/verify_result_1.mp4)
+
+In the `data` folder, check for the WiFi packet file. If you used `-b`, a Bluetooth file should also appear. Use [DB Browser for SQLite](https://sqlitebrowser.org/) to inspect the data.
+
+![](materials/ch2/verify_result_2.mp4)
+
+## Enable the Service
+
+Once testing is complete, configure the Pi to start sensing automatically at boot:
+
+```bash
+bash urban-sensing-raspi/service.sh
+```
+
+Follow the prompts and verify the service is running. Press `Ctrl+C` to exit the status display.
+
+![](materials/ch2/bash_service.mp4)
+
+::: {.callout-note}
+The script has a 30-second delay at startup. To pause sensing for file transfers or maintenance, stop the service within this window:
+
+```bash
+sudo systemctl stop sensing.service
+```
+:::
+
+## Test in the Field
+
+This section tests the service without Ethernet, simulating real-world deployment. The WiFi adapter transitions through two modes: **station mode** for network connection, then **monitor mode** for packet capture.
+
+### Prepare the Hardware
+
+Turn on your mobile hotspot and connect an external battery to power the Pi.
+
+::: {layout="[[65,35]]"}
+![Connect the battery](materials/ch2/plug_external.jpg)
+
+![Enable your hotspot](materials/ch2/turnon_hotspot.jpg)
+:::
+
+### Station Mode
+
+When the Pi boots, it first enters **station mode** to connect to your hotspot. In this mode:
+
+- The WiFi adapter's indicator light turns **on**
+- The Pi appears on your hotspot's connected devices list
+- Status files begin uploading to Dropbox
+
+![](materials/ch2/pi_station_mode.png)
+
+Once connected, verify that status files appear in your Dropbox.
+
+![](materials/ch2/check_dropbox_upload.png)
+
+::: {.callout-note}
+The `raspberrypi` network may remain visible briefly. The script disconnects `wlan0` after approximately 3 minutes.
+:::
+
+### Monitor Mode
+
+After the initial connection, the adapter switches to **monitor mode** for passive packet capture. In this mode:
+
+- The WiFi adapter's indicator light turns **off**
+- The Pi disappears from your hotspot's connected devices list
+- Packet capture begins
+
+![](materials/ch2/pi_monitor_mode.png)
+
+To end sensing, unplug the battery. Review the results using Ethernet or your mobile hotspot, as in the controlled environment test.

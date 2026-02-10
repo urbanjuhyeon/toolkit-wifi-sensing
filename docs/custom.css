@@ -1,0 +1,46 @@
+/* Import JetBrains Mono font */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* Apply JetBrains Mono for code, D2Coding for Korean fallback */
+code, pre, .sourceCode {
+  font-family: 'JetBrains Mono', 'D2Coding', 'D2CodingLigature', monospace !important;
+  font-variant-ligatures: normal;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+/* Ensure ligatures work in code cells */
+div.sourceCode pre code {
+  font-family: 'JetBrains Mono', 'D2Coding', 'D2CodingLigature', monospace !important;
+  font-variant-ligatures: normal;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+/* Table styling: dark header, horizontal lines between rows */
+.table,
+table {
+  border-collapse: collapse !important;
+  border-top: 2px solid #000 !important;
+  border-bottom: 2px solid #000 !important;
+}
+
+.table thead th,
+table thead th {
+  background-color: #4a4a4a !important;
+  color: #ffffff !important;
+  font-weight: normal !important;
+  border-bottom: 2px solid #000 !important;
+  padding-top: 0.3rem !important;
+  padding-bottom: 0.3rem !important;
+}
+
+.table tbody td,
+table tbody td {
+  padding-top: 0.3rem !important;
+  padding-bottom: 0.3rem !important;
+  border-bottom: 1px solid #ddd !important;
+}
+
+.table tbody tr:last-child td,
+table tbody tr:last-child td {
+  border-bottom: none !important;
+}

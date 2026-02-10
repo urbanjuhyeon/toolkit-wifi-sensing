@@ -1,0 +1,642 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "WiFi Sensing Toolkit for Urban Studies",
+    "section": "",
+    "text": "Introduction\nThis book provides a complete guide to building and using WiFi sensors for measuring pedestrian activity in urban environments. It covers hardware setup, data processing, and extracting five key metrics: location, count, track, identity, and activities.",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#why-wifi-sensing",
+    "href": "index.html#why-wifi-sensing",
+    "title": "WiFi Sensing Toolkit for Urban Studies",
+    "section": "Why WiFi Sensing?",
+    "text": "Why WiFi Sensing?\n\n\n\nWiFi sensing concept: sensors mounted on buildings detect probe requests broadcast by WiFi-enabled devices carried by pedestrians.\n\n\nQuantifying pedestrian traffic is essential for urban planning, public safety, and sustainable city development. Traditional methods—manual counts or surveys—are labor-intensive and provide only snapshots. WiFi sensing offers continuous, non-invasive monitoring by detecting probe requests that WiFi-enabled devices broadcast regularly to discover nearby networks.\nMost pedestrians carry smartphones or other WiFi devices. Each device’s probe request includes a MAC address, enabling sensors to detect presence, estimate location, and track movement across multiple sensors. This passive approach requires no participation from pedestrians, making it practical for monitoring public spaces at scale.\nRecent urban sensing initiatives—such as the Array of Things in Chicago and S-DoT in Seoul—demonstrate the growing interest in sensor-based urban analytics. This book makes WiFi sensing accessible to researchers, planners, and practitioners using affordable, off-the-shelf components.",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#passive-vs-active-wifi-sensing",
+    "href": "index.html#passive-vs-active-wifi-sensing",
+    "title": "WiFi Sensing Toolkit for Urban Studies",
+    "section": "Passive vs Active WiFi Sensing",
+    "text": "Passive vs Active WiFi Sensing\n\nWiFi-based location sensing takes two forms:\nPassive sensing answers “Where is the device?” Sensors (sniffers) receive probe requests broadcast by nearby devices. The device holder doesn’t need to do anything—their phone automatically sends these packets. Detection range is typically 30–100 meters outdoors. This book focuses on passive sensing for pedestrian monitoring.\nActive sensing answers “Where am I?” from the device’s perspective. The device scans for nearby access points and sends the data to a server for location estimation. This requires user consent and an installed app, making it impractical for monitoring public spaces.\nPassive sensing trades individual-level precision for scalability. It captures aggregate patterns—when and where people concentrate, how they move through space—without requiring consent from every passerby.",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#what-this-book-covers",
+    "href": "index.html#what-this-book-covers",
+    "title": "WiFi Sensing Toolkit for Urban Studies",
+    "section": "What This Book Covers",
+    "text": "What This Book Covers\n\n\n\n\n\n\n\nPart\nContent\n\n\n\n\nHardware\nBuilding WiFi sensors with Raspberry Pi, configuring monitor mode, deploying in the field\n\n\nData Processing\nAggregating raw packets, cleaning data, handling timestamps and sensor IDs\n\n\nMetrics\nFive urban analytics metrics: Location, Count, Track, Identity, Activities\n\n\nLimitations\nMAC randomization, coverage gaps, privacy considerations",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#references",
+    "href": "index.html#references",
+    "title": "WiFi Sensing Toolkit for Urban Studies",
+    "section": "References",
+    "text": "References",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "2-1-installation.html",
+    "href": "2-1-installation.html",
+    "title": "1  Installation",
+    "section": "",
+    "text": "1.1 Components\nThis chapter prepares the hardware and software for a WiFi sensor. After assembling the components, you will install the operating system and establish remote access to the Pi via SSH. A troubleshooting section at the end covers common setup issues.\nThe WiFi sensor consists of a single-board computer, a wireless adapter for packet capture, and supporting peripherals for power and storage:\nThe core components are:\nAdditional sensors such as cameras or environmental monitors can be added for extended data collection.",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Installation</span>"
+    ]
+  },
+  {
+    "objectID": "2-1-installation.html#components",
+    "href": "2-1-installation.html#components",
+    "title": "1  Installation",
+    "section": "",
+    "text": "Raspberry Pi: A single-board computer, Model 3 or newer, that serves as the main computing unit.\nWiFi adapter: An external USB adapter with monitor mode support for passive packet capture. The Pi’s built-in WiFi can also enter monitor mode but may overheat during extended sessions.\nMicro SD card: A storage device of 16GB or larger for the operating system and captured data.\nEthernet cable: A cable for connecting the Pi to your computer for initial SSH access.\nPortable power bank: A battery pack of 20,000mAh or higher for outdoor deployment.",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Installation</span>"
+    ]
+  },
+  {
+    "objectID": "2-1-installation.html#operating-system",
+    "href": "2-1-installation.html#operating-system",
+    "title": "1  Installation",
+    "section": "1.2 Operating System",
+    "text": "1.2 Operating System\n\nDownload the Pi Imager\nDownload the Raspberry Pi Imager from the official website and install it on your computer.\n\n\n\nFormat the SD Card\nInsert an SD card, launch the Imager, click CHOOSE OS, select Erase, then Format SD Card.\nVideo\n\n\nFlash the OS\nWith the SD card formatted, install Raspberry Pi OS:\n\nChoose the OS: Click CHOOSE OS and select Raspberry Pi OS.\nChoose the SD Card: Select your SD card from the list.\nEnable SSH: Required for remote access.\nSet Username and Password: Default is pi / raspberry. Change after setup for security.\nConfigure Wireless LAN: Enter your mobile hotspot credentials for time synchronization at boot.\nWrite: Click WRITE to flash the OS.\n\nVideo\nOnce complete, insert the SD card into the Pi to boot.\n\n\n\n\n\n\nNoteWhy use a mobile hotspot?\n\n\n\n\n\nThe Raspberry Pi has no real-time clock and needs internet access at boot to synchronize time. A mobile hotspot provides this connection reliably during field deployment.",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Installation</span>"
+    ]
+  },
+  {
+    "objectID": "2-1-installation.html#remote-access",
+    "href": "2-1-installation.html#remote-access",
+    "title": "1  Installation",
+    "section": "1.3 Remote Access",
+    "text": "1.3 Remote Access\nChoose a connection method based on your setup:\n\n\nOption A (Ethernet): For desktops without WiFi. See Section 1.3.1.\nOption B (Mobile Hotspot): For laptops with WiFi. See Section 1.3.2.\n\n\nOption A: Ethernet Cable\nConnect your Pi to your computer using an Ethernet cable.\n\nIn your network settings, enable Internet Connection Sharing.\nVideo\nOpen Command Prompt (Ctrl + R, type cmd, Enter) and connect via SSH:\nssh pi@raspberrypi\nVideo\n\n\nOption B: Mobile Hotspot\nEnable your mobile hotspot with the same credentials you entered when flashing the SD card.\n\nInsert the SD card into the Pi and connect power.\n\nConnect your laptop to the same hotspot.\n\nBoth devices should appear in your hotspot interface. Open Command Prompt and connect via SSH:\nssh pi@raspberrypi\nVideo\n\n\nVerify Internet Connectivity\nTest the Pi’s internet connection:\nping 8.8.8.8\nA successful connection shows 64 bytes from 8.8.8.8. Press Ctrl + C to stop.\nVideo",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Installation</span>"
+    ]
+  },
+  {
+    "objectID": "2-1-installation.html#troubleshooting",
+    "href": "2-1-installation.html#troubleshooting",
+    "title": "1  Installation",
+    "section": "1.4 Troubleshooting",
+    "text": "1.4 Troubleshooting\n\nNetwork Connection Error\nIf you cannot access the Pi, try toggling your network adapter off and on, re-enabling Internet Connection Sharing, or checking the Ethernet connection.\nVideo\n\n\nFinding the Pi’s IP Address\nWhen connecting to multiple Pis, you need specific IP addresses. Run arp -a in Command Prompt to list devices. Raspberry Pi MAC addresses start with B8:27:EB or DC:A6:32.\nVideo\n\n\nSSH Key Warning\nThis error appears after reinstalling the OS or changing SSH keys:\n\nRemove the old key and reconnect:\nssh-keygen -R raspberrypi\n\n\nSecured Networks\nUniversity or corporate networks may require MAC address registration. Contact your IT administrator.",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Installation</span>"
+    ]
+  },
+  {
+    "objectID": "2-2-configuration.html",
+    "href": "2-2-configuration.html",
+    "title": "2  Configuration",
+    "section": "",
+    "text": "2.1 System Setup\nThis chapter configures the Pi for data collection. You will update the system, set up a file server for easy data transfer, connect to cloud storage for remote monitoring, and install the capture scripts.\nStart by updating the operating system to ensure all packages are current:\nVideo\nRestart the Pi to apply the updates, then enter superuser mode for the remaining configuration tasks:",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Configuration</span>"
+    ]
+  },
+  {
+    "objectID": "2-2-configuration.html#system-setup",
+    "href": "2-2-configuration.html#system-setup",
+    "title": "2  Configuration",
+    "section": "",
+    "text": "sudo apt-get update -y && sudo apt-get upgrade -y\n\n\n\n\n\n\nNoteCopy and paste in the terminal\n\n\n\n\n\nClick the copy icon next to code blocks. If Ctrl+V doesn’t work, try Ctrl+Shift+V or right-click.\n\n\n\n\n\nsudo reboot\nsudo su",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Configuration</span>"
+    ]
+  },
+  {
+    "objectID": "2-2-configuration.html#file-server",
+    "href": "2-2-configuration.html#file-server",
+    "title": "2  Configuration",
+    "section": "2.2 File Server",
+    "text": "2.2 File Server\nSamba enables file sharing between the Pi and your computer over Ethernet. Once configured, you can drag and drop files directly through your file explorer.\n\nInstall and Configure\nInstall Samba and its dependencies:\nsudo apt-get install -y -q samba samba-common-bin\n\nOpen the configuration file to define the shared folder:\nsudo nano /etc/samba/smb.conf\nMove to the end of the file with Alt + / and add the following block:\n[share]\npath = /home/pi\nwriteable=Yes\ncreate mask=0777\ndirectory mask=0777\npublic=no\n\nSave with Ctrl + X, then Y, then Enter.\nSet a password for the share. Enter raspberry when prompted:\nsudo smbpasswd -a pi\nRestart both Samba services to apply the changes:\nsudo service smbd restart && sudo service nmbd restart\n\n\nTest the Connection\nOn your computer, open File Explorer (Win + E) and navigate to \\\\raspberrypi\\share. Enter the Pi’s username and password when prompted.\nVideo\nCreate a test file on the Pi:\nsudo nano test.txt\nType any text, save the file, and verify it appears in your File Explorer.\nVideo",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Configuration</span>"
+    ]
+  },
+  {
+    "objectID": "2-2-configuration.html#cloud-storage",
+    "href": "2-2-configuration.html#cloud-storage",
+    "title": "2  Configuration",
+    "section": "2.3 Cloud Storage",
+    "text": "2.3 Cloud Storage\nCloud storage allows you to monitor the Pi’s status remotely without connecting a monitor or keyboard. The Pi can upload status updates to Dropbox, which you can check from any device.\n\nCreate a Dropbox App\nGo to the Dropbox developer page, sign in, and create a new application.\n\nEnable all file permissions under the individual scope.\n\n\n\nInstall the Uploader\nInstall the required packages and clone the Dropbox Uploader repository:\nsudo apt install curl git -y\ngit clone https://github.com/andreafabrizi/Dropbox-Uploader.git\nNavigate to the directory and make the script executable:\ncd Dropbox-Uploader && sudo chmod +x dropbox_uploader.sh\nRun the script to begin authentication:\n./dropbox_uploader.sh\nEnter your app key and app secret when prompted.\n\nOpen the provided URL in a browser and click Allow to authorize the app.\n\nCopy the access code and paste it back into the terminal.\n\n\n\nVerify Access\nTest the connection by uploading a file to your Dropbox:\n./dropbox_uploader.sh upload README.md /\nThe file should appear in your Dropbox app folder.\nVideo\nReturn to the home directory before continuing:\ncd /home/pi",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Configuration</span>"
+    ]
+  },
+  {
+    "objectID": "2-2-configuration.html#capture-scripts",
+    "href": "2-2-configuration.html#capture-scripts",
+    "title": "2  Configuration",
+    "section": "2.4 Capture Scripts",
+    "text": "2.4 Capture Scripts\nThe capture scripts handle WiFi packet collection. Clone the repository from GitHub:\ncd /home/pi\ngit clone https://github.com/urbanjuhyeon/urban-sensing-raspi.git\n\n\nInstall Packages\nNavigate to the repository and run the package installation script:\ncd /home/pi/urban-sensing-raspi\nbash packages.sh\nVideo\n\n\nSet the Sensor Name\nEach sensor needs a unique name for identification in your data. Run the naming script and enter a name when prompted:\nbash name.sh\nThe name is stored in sensor_name.conf. If skipped, the default raspberrypi is used.\nVideo\n\n\nConfigure Network Interfaces\nCheck the current network interface assignment with ifconfig. The internal WiFi adapter should be wlan0, while external adapters receive different names.\nifconfig\n\nRun the environment script to ensure consistent interface naming at boot:\nbash envr.sh\nVideo",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Configuration</span>"
+    ]
+  },
+  {
+    "objectID": "2-3-deployment.html",
+    "href": "2-3-deployment.html",
+    "title": "3  Deployment",
+    "section": "",
+    "text": "3.1 Test in Controlled Environment\nThis chapter covers testing and deploying the WiFi sensing service. You will first test in a controlled environment, then enable the service to run at boot, and finally test in the field without Ethernet.",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "2-3-deployment.html#test-in-controlled-environment",
+    "href": "2-3-deployment.html#test-in-controlled-environment",
+    "title": "3  Deployment",
+    "section": "",
+    "text": "Run the Script\nPower off the Pi, insert the external WiFi adapter, and power it back on.\n\nConnect via SSH and verify the network interfaces:\nifconfig\nThe internal WiFi should be wlan0 with a MAC address starting with b8:27:eb. External adapters appear as wlan1, wlan2, etc.\n\nEnter superuser mode and run the sensing script:\nsudo su\npython3 urban-sensing-raspi/code/start.py\nLet it run for about 2 minutes, then stop with Ctrl+C.\nVideo\n\n\n\n\n\n\nNoteScript options\n\n\n\n\n\n\n-i: Retain raw WiFi packets\n-b: Enable Bluetooth sensing\n\nSee the GitHub repository for all options.\n\n\n\n\n\nVerify the Results\nAccess the Pi’s shared folder by typing \\\\raspberrypi\\share in File Explorer.\nIn the stats folder, verify that file names reflect the execution time and that files have been uploaded to Dropbox.\nVideo\nIn the data folder, check for the WiFi packet file. If you used -b, a Bluetooth file should also appear. Use DB Browser for SQLite to inspect the data.\nVideo",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "2-3-deployment.html#enable-the-service",
+    "href": "2-3-deployment.html#enable-the-service",
+    "title": "3  Deployment",
+    "section": "3.2 Enable the Service",
+    "text": "3.2 Enable the Service\nOnce testing is complete, configure the Pi to start sensing automatically at boot:\nbash urban-sensing-raspi/service.sh\nFollow the prompts and verify the service is running. Press Ctrl+C to exit the status display.\nVideo\n\n\n\n\n\n\nNote\n\n\n\nThe script has a 30-second delay at startup. To pause sensing for file transfers or maintenance, stop the service within this window:\nsudo systemctl stop sensing.service",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "2-3-deployment.html#test-in-the-field",
+    "href": "2-3-deployment.html#test-in-the-field",
+    "title": "3  Deployment",
+    "section": "3.3 Test in the Field",
+    "text": "3.3 Test in the Field\nThis section tests the service without Ethernet, simulating real-world deployment. The WiFi adapter transitions through two modes: station mode for network connection, then monitor mode for packet capture.\n\nPrepare the Hardware\nTurn on your mobile hotspot and connect an external battery to power the Pi.\n\n\n\n\n\n\nConnect the battery\n\n\n\n\n\n\n\nEnable your hotspot\n\n\n\n\n\n\n\nStation Mode\nWhen the Pi boots, it first enters station mode to connect to your hotspot. In this mode:\n\nThe WiFi adapter’s indicator light turns on\nThe Pi appears on your hotspot’s connected devices list\nStatus files begin uploading to Dropbox\n\n\nOnce connected, verify that status files appear in your Dropbox.\n\n\n\n\n\n\n\nNote\n\n\n\nThe raspberrypi network may remain visible briefly. The script disconnects wlan0 after approximately 3 minutes.\n\n\n\n\nMonitor Mode\nAfter the initial connection, the adapter switches to monitor mode for passive packet capture. In this mode:\n\nThe WiFi adapter’s indicator light turns off\nThe Pi disappears from your hotspot’s connected devices list\nPacket capture begins\n\n\nTo end sensing, unplug the battery. Review the results using Ethernet or your mobile hotspot, as in the controlled environment test.",
+    "crumbs": [
+      "Building the Sensor",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "3-1-aggregation.html",
+    "href": "3-1-aggregation.html",
+    "title": "4  Aggregation",
+    "section": "",
+    "text": "4.1 Database Overview\nWiFi-enabled devices continuously broadcast probe requests—sometimes multiple times per second—to discover nearby networks. A single smartphone can generate thousands of packets per hour. Before analysis, this raw stream must be filtered and compressed into meaningful records.\nThis chapter covers the aggregation pipeline: loading raw packets from the database, filtering by time, frame type, and signal strength, then grouping into time intervals. The result is a cleaned dataset where each row represents one device detected at one sensor during one time interval.\nThe WiFi data is stored in an SQLite3 database—a portable, file-based format. You can inspect its structure using DB Browser for SQLite.\nThe packets table contains the following attributes:",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Aggregation</span>"
+    ]
+  },
+  {
+    "objectID": "3-1-aggregation.html#database-overview",
+    "href": "3-1-aggregation.html#database-overview",
+    "title": "4  Aggregation",
+    "section": "",
+    "text": "Attribute\nDescription\n\n\n\n\ntimestamp\nDate and time when the packet was captured\n\n\ntype\nPacket category (e.g., “Management”)\n\n\nsubtype\nSpecific packet type (e.g., “Probe Request”)\n\n\nstrength\nSignal strength in dBm; lower values indicate weaker signals\n\n\nsource_address\nHashed MAC address of the sending device\n\n\nsource_address_randomized\nWhether the source address is randomized (1) or not (0)\n\n\ndestination_address\nHashed MAC address of the intended recipient\n\n\naccess_point_name\nSSID of the target access point\n\n\nsequence_number\nUnique identifier for ordering packets\n\n\nchannel\nWiFi channel on which the packet was transmitted\n\n\nsensor_name\nIdentifier of the sensor that captured the packet",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Aggregation</span>"
+    ]
+  },
+  {
+    "objectID": "3-1-aggregation.html#load-and-process-in-r",
+    "href": "3-1-aggregation.html#load-and-process-in-r",
+    "title": "4  Aggregation",
+    "section": "4.2 Load and Process in R",
+    "text": "4.2 Load and Process in R\n\n\n\n\n\n\nNoteSample data\n\n\n\nDownload sample_raw.zip if you don’t have your own data.\n\n\n\nInstall Packages\npacman::p_load() installs missing packages and loads them in one step.\n\nif (!require(pacman)) install.packages(\"pacman\")\npacman::p_load(RSQLite, DBI, data.table, lubridate, knitr)\n\n\nRSQLite and DBI: Connect to SQLite databases\ndata.table: Fast data manipulation\nlubridate: Parse and manipulate timestamps\nknitr: Format tables for display\n\n\n\n\n\n\n\nNoteWhy data.table instead of tidyverse?\n\n\n\n\n\nRaw WiFi data often contains millions of rows. data.table is significantly faster and more memory-efficient than dplyr for large datasets, making it the preferred choice for this workflow.\n\n\n\n\n\nConnect and Query\nConnect to the database, query all packets, and convert the result to a data.table.\n\nconn &lt;- dbConnect(SQLite(), \"path/to/your/database.sqlite\")\nwifi_data &lt;- dbGetQuery(conn, \"SELECT * FROM packets\")\nwifi_data &lt;- as.data.table(wifi_data)\n\nHere are the first few rows:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsensor_name\ntimestamp\ntype\nsubtype\nrssi\nsource_address\nsource_address_randomized\n\n\n\n\nA01\n2024-04-09T19:17:27.536121\nmanagement\nprobe-response\n-65\nf0659bdd9305e4341afb9f55df7cd20a4adfd726f83a33c3857281dfa3de8575\n0\n\n\nA01\n2024-04-09T19:17:27.541249\nmanagement\nprobe-response\n-67\nf0659bdd9305e4341afb9f55df7cd20a4adfd726f83a33c3857281dfa3de8575\n0\n\n\nA01\n2024-04-09T19:17:27.635933\nmanagement\nprobe-response\n-67\nf0659bdd9305e4341afb9f55df7cd20a4adfd726f83a33c3857281dfa3de8575\n0\n\n\nA01\n2024-04-09T19:17:27.746452\nmanagement\nprobe-request\n-67\nd94147cf12befe41bb40dd7957733c54442de7a9d45a75ec3c747856c4bdc129\n1\n\n\nA01\n2024-04-09T19:17:27.765945\nmanagement\nprobe-request\n-65\nd94147cf12befe41bb40dd7957733c54442de7a9d45a75ec3c747856c4bdc129\n1\n\n\n\n\n\n\n\nFilter by Time\nSubset the data to your period of interest. Here we extract a 3-minute window:\n\nstart_date &lt;- ymd_hms(\"2024-04-09 19:17:00\")\nend_date &lt;- ymd_hms(\"2024-04-09 19:20:00\")\n\nwifi_data_filtered_time &lt;- wifi_data[\n  between(ymd_hms(timestamp), start_date, end_date)\n]\n\n\n\nFilter by Frame Type\nWiFi packets include both requests (sent by devices) and responses (sent by access points). For pedestrian sensing, we keep only probe requests—these indicate the presence of a mobile device. Responses come from fixed infrastructure and are not useful here.\n\nwifi_data_filtered_frame &lt;- wifi_data_filtered_time[!grepl(\"response\", subtype)]\n\n\n\n\n\n\n\nNoteFrame type distribution\n\n\n\n\n\nProbe requests are a small fraction of all WiFi traffic. The table below shows frame type distribution from a month-long campus deployment—probe requests account for only 2.6% of packets, while responses and data frames dominate:\n\n\n\nType\nSubtype\nCount\nProportion\n\n\n\n\nManagement\nprobe-request\n714,353\n2.6%\n\n\nManagement\nprobe-response\n9,532,383\n35.3%\n\n\nManagement\nauthentication\n352,856\n1.3%\n\n\nData\nnull\n8,716,923\n32.3%\n\n\nData\nqos-data\n4,875,257\n18.1%\n\n\nData\nqos-null\n2,253,010\n8.4%\n\n\n\n\n\n\n\n\nFilter by Signal Strength\nSignal strength (RSSI) indicates how close a device is to the sensor. We keep packets between -80 and -30 dBm to focus on nearby pedestrians. Signals weaker than -80 dBm are too distant or unreliable. Signals stronger than -30 dBm likely come from devices placed directly on the sensor rather than passersby.\n\nwifi_data_filtered_strength &lt;- wifi_data_filtered_frame[between(rssi, -80, -30)]\n\n\n\nAggregate by Interval\nA single device may transmit dozens of packets per second. We collapse these into one record per device per second, keeping the median signal strength and packet count.\n\nwifi_data_filtered_strength[, timestamp := floor_date(ymd_hms(timestamp), unit = \"second\")]\n\naggregated_data &lt;- wifi_data_filtered_strength[, .(\n  median_rssi = median(rssi),\n  count = .N\n), by = .(sensor_name, source_address, source_address_randomized, timestamp)]\n\nhead(aggregated_data)\n\n   sensor_name                                                   source_address\n        &lt;char&gt;                                                           &lt;char&gt;\n1:         A01 d94147cf12befe41bb40dd7957733c54442de7a9d45a75ec3c747856c4bdc129\n2:         A01 5e69a0bc9bd73c0b72642e2e0f4f99670b85e8fdf4616bc19fb1f8d63107bfe5\n3:         A01 05d29a432f4ff4c5f2e49e185334619d4365ef65370fcf9891bc7b1f8c0a68b6\n4:         A01 a6a0a285818a48c083c72c885283f1652208b3239f70e859f49067b36781acc6\n5:         A01 b3268f2d7ca90e7ea3ff549decbf484d478c3eaf28784a7bbfbd5aaee22d3a6a\n6:         A01 f6e4a5fce8432422779b9e68da551a19b24b749ddbd58735bd95334747258d66\n   source_address_randomized           timestamp median_rssi count\n                       &lt;int&gt;              &lt;POSc&gt;       &lt;num&gt; &lt;int&gt;\n1:                         1 2024-04-09 19:17:27         -66     2\n2:                         1 2024-04-09 19:17:27         -75     2\n3:                         0 2024-04-09 19:17:27         -78     2\n4:                         0 2024-04-09 19:17:27         -75     1\n5:                         1 2024-04-09 19:17:27         -78     2\n6:                         0 2024-04-09 19:17:28         -76     2\n\n\n\n\nSave and Close\nExport the aggregated data to CSV and close the database connection.\n\nfwrite(aggregated_data, \"../data/tutorial/aggregated_sample_1.csv\")\ndbDisconnect(conn)",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Aggregation</span>"
+    ]
+  },
+  {
+    "objectID": "3-1-aggregation.html#pipeline-summary",
+    "href": "3-1-aggregation.html#pipeline-summary",
+    "title": "4  Aggregation",
+    "section": "4.3 Pipeline Summary",
+    "text": "4.3 Pipeline Summary\nEach step reduces the data volume. In this 3-minute sample, filtering cuts the packet count from 11,490 to 2,904—a 75% reduction. The frame type filter has the largest effect, removing probe responses that outnumber requests. Aggregation then compresses 2,904 packets into 522 interval records while preserving all 112 unique devices.\n\nsummary_table &lt;- data.table(\n  Step = c(\"Initial\", \"After Time Filter\", \"After Frame Filter\", \"After Strength Filter\", \"After Aggregation\"),\n  Packets = c(nrow(wifi_data), nrow(wifi_data_filtered_time), nrow(wifi_data_filtered_frame), nrow(wifi_data_filtered_strength), nrow(aggregated_data)),\n  Unique_Devices = c(\n    length(unique(wifi_data$source_address)),\n    length(unique(wifi_data_filtered_time$source_address)),\n    length(unique(wifi_data_filtered_frame$source_address)),\n    length(unique(wifi_data_filtered_strength$source_address)),\n    length(unique(aggregated_data$source_address))\n  )\n)\n\nprint(summary_table)\n\n                    Step Packets Unique_Devices\n                  &lt;char&gt;   &lt;int&gt;          &lt;int&gt;\n1:               Initial   11490            323\n2:     After Time Filter    5274            163\n3:    After Frame Filter    3380            123\n4: After Strength Filter    2904            112\n5:     After Aggregation     522            112",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Aggregation</span>"
+    ]
+  },
+  {
+    "objectID": "3-1-aggregation.html#automate-the-pipeline",
+    "href": "3-1-aggregation.html#automate-the-pipeline",
+    "title": "4  Aggregation",
+    "section": "4.4 Automate the Pipeline",
+    "text": "4.4 Automate the Pipeline\nProcessing files manually is impractical—real deployments generate one database file per sensor per day. This section wraps the pipeline into a reusable function that can process multiple files at once.\n\nSingle Database\nThe aggregate_data() function takes a database path, time range, and aggregation interval, then writes the result to a CSV file.\n\naggregate_data &lt;- function(db_path, start_date, end_date, interval = \"second\", output_suffix = \"_1second.csv\") {\n  conn &lt;- dbConnect(SQLite(), db_path)\n\n  wifi_data &lt;- dbGetQuery(conn, \"SELECT sensor_name, timestamp, type, subtype, strength AS rssi, source_address, source_address_randomized FROM packets\")\n  setDT(wifi_data)\n\n  wifi_data &lt;- wifi_data[between(ymd_hms(timestamp), start_date, end_date)]\n  wifi_data &lt;- wifi_data[!grepl(\"response\", subtype)]\n  wifi_data &lt;- wifi_data[between(rssi, -80, -30)]\n\n  wifi_data[, timestamp := floor_date(ymd_hms(timestamp), unit = interval)]\n  aggregated_data &lt;- wifi_data[, .(median_rssi = median(rssi), count = .N), by = .(sensor_name, source_address, source_address_randomized, timestamp)]\n\n  output_path &lt;- sub(\"\\\\.sqlite3$\", output_suffix, db_path)\n  fwrite(aggregated_data, output_path)\n\n  dbDisconnect(conn)\n}\n\nRun on a single file:\n\nstart_date &lt;- ymd_hms(\"2024-04-09 19:17:00\")\nend_date &lt;- ymd_hms(\"2024-04-09 19:20:00\")\n\naggregate_data(\"../data/tutorial/sample_1.sqlite3\", start_date, end_date, interval = \"second\")\n\n\n\nMultiple Databases\nUse purrr::map() to apply the function across all database files in a folder. Each file produces a corresponding CSV.\n\npacman::p_load(purrr)\n\ndb_files &lt;- list.files(\"../data/tutorial\", pattern = \"sample_.*\\\\.sqlite3$\", full.names = TRUE)\nprint(db_files)\n\nstart_date &lt;- ymd_hms(\"2024-04-09 19:17:00\")\nend_date &lt;- ymd_hms(\"2024-04-09 19:20:00\")\n\nmap(db_files, ~aggregate_data(.x, start_date, end_date, interval = \"second\"))",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Aggregation</span>"
+    ]
+  },
+  {
+    "objectID": "3-2-cleaning.html",
+    "href": "3-2-cleaning.html",
+    "title": "5  Cleaning",
+    "section": "",
+    "text": "5.1 Load Data\nThe aggregated data still contains noise that distorts device counts. Randomized MAC addresses cause the same phone to appear as multiple different devices. Stationary devices like access points, fixed desktops, and IoT equipment add non-pedestrian signals.\nThis chapter removes both sources of error: first filtering out randomized MACs, then excluding devices that stay in place for hours. The result is a dataset of unique mobile devices suitable for pedestrian analysis.",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Cleaning</span>"
+    ]
+  },
+  {
+    "objectID": "3-2-cleaning.html#load-data",
+    "href": "3-2-cleaning.html#load-data",
+    "title": "5  Cleaning",
+    "section": "",
+    "text": "NoteSample data\n\n\n\nDownload sample_aggregated.zip if you don’t have aggregated data from the previous chapter.\n\n\n\nInstall Packages\npacman::p_load() installs missing packages and loads them in one step.\n\nif (!require(pacman)) install.packages(\"pacman\")\npacman::p_load(data.table, lubridate, purrr)\n\n\ndata.table: Fast data manipulation\nlubridate: Parse and manipulate timestamps\npurrr: Functional programming tools\n\n\n\nCombine Files\nMultiple sensors produce separate CSV files. Combine them into a single dataset before cleaning.\n\ncsv_files &lt;- list.files(\n  \"../data/tutorial\", pattern = \"1second.*\\\\.csv$\", full.names = TRUE\n)\n\nwifi_data &lt;- csv_files |&gt; map(fread) |&gt; rbindlist()\n\nHere are the first few rows:\n\nhead(wifi_data, 5)\n\n   sensor_name                                                   source_address\n        &lt;char&gt;                                                           &lt;char&gt;\n1:         A01 d94147cf12befe41bb40dd7957733c54442de7a9d45a75ec3c747856c4bdc129\n2:         A01 5e69a0bc9bd73c0b72642e2e0f4f99670b85e8fdf4616bc19fb1f8d63107bfe5\n3:         A01 05d29a432f4ff4c5f2e49e185334619d4365ef65370fcf9891bc7b1f8c0a68b6\n4:         A01 a6a0a285818a48c083c72c885283f1652208b3239f70e859f49067b36781acc6\n5:         A01 b3268f2d7ca90e7ea3ff549decbf484d478c3eaf28784a7bbfbd5aaee22d3a6a\n   source_address_randomized           timestamp median_rssi count\n                       &lt;int&gt;              &lt;POSc&gt;       &lt;int&gt; &lt;int&gt;\n1:                         1 2024-04-09 19:17:27         -66     2\n2:                         1 2024-04-09 19:17:27         -75     2\n3:                         0 2024-04-09 19:17:27         -78     2\n4:                         0 2024-04-09 19:17:27         -75     1\n5:                         1 2024-04-09 19:17:27         -78     2",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Cleaning</span>"
+    ]
+  },
+  {
+    "objectID": "3-2-cleaning.html#clean-the-data",
+    "href": "3-2-cleaning.html#clean-the-data",
+    "title": "5  Cleaning",
+    "section": "5.2 Clean the Data",
+    "text": "5.2 Clean the Data\n\nRemove Random MAC Addresses\nModern smartphones randomize their MAC addresses for privacy, creating a new identifier each time they scan for networks. One phone can appear as dozens of different devices. We use the source_address_randomized flag to filter these out.\n\nwifi_filtered &lt;- wifi_data[source_address_randomized != 1]\n\n\n\n\n\n\n\nNoteHow the sensor detects randomized MACs\n\n\n\n\n\nThe sensor checks the second bit of the first byte in the MAC address. If this bit is set to 1, the address is “locally administered”—meaning it was generated by the device rather than assigned by the manufacturer. This is the standard indicator for randomized addresses.\nMAC: A4:C3:F0:85:7E:2D\n      ^\nFirst byte: A4 = 10100100 in binary\n                      ^\n            Second bit = 0 → manufacturer-assigned (not randomized)\n\nMAC: 4E:7F:B2:91:3A:C8\n      ^\nFirst byte: 4E = 01001110 in binary\n                      ^\n            Second bit = 1 → locally administered (randomized)\nThe sensor flags each packet during capture, so you don’t need to parse MAC addresses yourself.\n\n\n\n\n\nRemove Stationary Devices\nStationary devices—access points, fixed desktops, IoT sensors—are detected continuously for hours at the same location. We identify them by session duration: how long a device stays at one sensor without leaving.\n\nWhat is a session?\nA session is a continuous period of detection. If a device disappears for more than 5 minutes and reappears, that counts as a new session.\nDevice A at Sensor 1:\n\n  |----detected----|   gap &gt; 5min   |----detected----|\n       Session 1                         Session 2\n      (45 minutes)                      (30 minutes)\nA pedestrian typically has one short session (a few minutes). A fixed desktop or IoT device has sessions lasting hours.\n\n\n\n\n\n\nNoteWhy sessions instead of total detection time?\n\n\n\n\n\nA device might appear briefly at different times throughout the day—5 minutes in the morning, 10 minutes at lunch, 3 minutes in the evening. The total is only 18 minutes, which looks like a pedestrian.\nBut a stationary device (like a fixed desktop or access point) stays continuously for hours at a time. By grouping detections into sessions, we can distinguish between:\n\nPedestrian: multiple short visits (each under 2 hours)\nStationary: at least one long continuous presence (2+ hours)\n\nThe 5-minute gap threshold reflects typical probe request intervals—if a device isn’t detected for 5+ minutes, it likely left the area.\n\n\n\n\n\nDefine thresholds\n\nsession_gap &lt;- 300  # 5 minutes: gap that starts a new session\nduration_threshold &lt;- 3600 * 2  # 2 hours: flag as stationary\n\n\nsession_gap: If no detection for 5+ minutes, start a new session\nduration_threshold: If any session exceeds 2 hours, mark as stationary\n\n\n\nCalculate session duration\nThe code below calculates the time gap between consecutive detections, groups them into sessions, and computes each session’s total duration.\n\nwifi_filtered[, time_diff := as.numeric(\n  difftime(timestamp, shift(timestamp), units = \"secs\")\n), by = .(source_address)]\n\nwifi_filtered[, session := cumsum(\n  time_diff &gt; session_gap | is.na(time_diff)\n), by = .(source_address)]\n\nwifi_filtered[, session_duration := sum(\n  time_diff[time_diff &lt;= session_gap], na.rm = TRUE\n), by = .(sensor_name, source_address, session)]\n\n\n\nFilter out stationary devices\nAny device with at least one session exceeding 2 hours is flagged as stationary and removed from the dataset.\n\nstationary &lt;- unique(\n  wifi_filtered[session_duration &gt;= duration_threshold, source_address]\n)\nwifi_cleaned &lt;- wifi_filtered[!source_address %in% stationary]\n\n\n\n\nSave the Result\nExport the cleaned data to CSV for use in subsequent analysis.\n\nfwrite(wifi_cleaned, \"../data/tutorial/cleaned_sample.csv\")",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Cleaning</span>"
+    ]
+  },
+  {
+    "objectID": "3-2-cleaning.html#pipeline-summary",
+    "href": "3-2-cleaning.html#pipeline-summary",
+    "title": "5  Cleaning",
+    "section": "5.3 Pipeline Summary",
+    "text": "5.3 Pipeline Summary\nEach cleaning step reduces noise. In this sample, random MAC filtering reduces 243 apparent devices to 178—a 27% reduction. These removed entries are duplicates from phones using different randomized identifiers. The stationary filter has no effect here because the sample spans only a few minutes; with longer deployments (12+ hours), this filter removes significantly more devices.\n\nsummary_table &lt;- data.table(\n  Step = c(\"Initial\", \"After Random MAC Removal\", \"After Stationary Removal\"),\n  Records = c(nrow(wifi_data), nrow(wifi_filtered), nrow(wifi_cleaned)),\n  Unique_Devices = c(\n    uniqueN(wifi_data$source_address),\n    uniqueN(wifi_filtered$source_address),\n    uniqueN(wifi_cleaned$source_address)\n  )\n)\n\nprint(summary_table)\n\n                       Step Records Unique_Devices\n                     &lt;char&gt;   &lt;int&gt;          &lt;int&gt;\n1:                  Initial    2694            243\n2: After Random MAC Removal    1300            178\n3: After Stationary Removal    1300            178",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Cleaning</span>"
+    ]
+  },
+  {
+    "objectID": "3-2-cleaning.html#automate-the-pipeline",
+    "href": "3-2-cleaning.html#automate-the-pipeline",
+    "title": "5  Cleaning",
+    "section": "5.4 Automate the Pipeline",
+    "text": "5.4 Automate the Pipeline\nFor larger deployments spanning days or weeks, you’ll have many CSV files to process. The clean_wifi_data() function below wraps all cleaning steps into a single reusable call.\n\nclean_wifi_data &lt;- function(csv_files, session_gap = 300, duration_threshold = 7200) {\n  # Combine all files\n  wifi_data &lt;- rbindlist(lapply(csv_files, fread))\n\n  # Remove random MACs\n  wifi_filtered &lt;- wifi_data[source_address_randomized != 1]\n\n  # Calculate sessions\n  wifi_filtered[, time_diff := as.numeric(\n    difftime(timestamp, shift(timestamp), units = \"secs\")\n  ), by = .(source_address)]\n\n  wifi_filtered[, session := cumsum(\n    time_diff &gt; session_gap | is.na(time_diff)\n  ), by = .(source_address)]\n\n  wifi_filtered[, session_duration := sum(\n    time_diff[time_diff &lt;= session_gap], na.rm = TRUE\n  ), by = .(sensor_name, source_address, session)]\n\n  # Remove stationary devices\n  stationary &lt;- unique(\n    wifi_filtered[session_duration &gt;= duration_threshold, source_address]\n  )\n  wifi_cleaned &lt;- wifi_filtered[!source_address %in% stationary]\n\n  # Drop helper columns\n  wifi_cleaned[, c(\"time_diff\", \"session\", \"session_duration\") := NULL]\n\n  return(wifi_cleaned)\n}\n\nRun on all aggregated files:\n\ncsv_files &lt;- list.files(\"../data/tutorial\", pattern = \"1second.*\\\\.csv$\", full.names = TRUE)\ncleaned_data &lt;- clean_wifi_data(csv_files)\n\nhead(cleaned_data)\n\n   sensor_name                                                   source_address\n        &lt;char&gt;                                                           &lt;char&gt;\n1:         A01 05d29a432f4ff4c5f2e49e185334619d4365ef65370fcf9891bc7b1f8c0a68b6\n2:         A01 a6a0a285818a48c083c72c885283f1652208b3239f70e859f49067b36781acc6\n3:         A01 f6e4a5fce8432422779b9e68da551a19b24b749ddbd58735bd95334747258d66\n4:         A01 c419f59d5917e15bd08b3ac2bd37467e8ecc076d44fc138856f3c9178718e118\n5:         A01 14bb59b4ee06a8c1c27d72811d39d856ea9c98003ed1f563f9d3680cc1d9b63a\n6:         A01 fa37ab8e615eb19b7a2cdbcea288c51271da5f418e74d892597e9b0b6226f118\n   source_address_randomized           timestamp median_rssi count\n                       &lt;int&gt;              &lt;POSc&gt;       &lt;int&gt; &lt;int&gt;\n1:                         0 2024-04-09 19:17:27         -78     2\n2:                         0 2024-04-09 19:17:27         -75     1\n3:                         0 2024-04-09 19:17:28         -76     2\n4:                         0 2024-04-09 19:17:28         -71     1\n5:                         0 2024-04-09 19:17:29         -73     1\n6:                         0 2024-04-09 19:17:29         -73     1",
+    "crumbs": [
+      "Processing Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Cleaning</span>"
+    ]
+  },
+  {
+    "objectID": "4-1-overview.html",
+    "href": "4-1-overview.html",
+    "title": "6  Metrics Overview",
+    "section": "",
+    "text": "We explore how WiFi gives us a snapshot of urban life. It’s about identifying where people are (Location), counting them (Count), tracking their movements (Track), recognizing visitor patterns (Identity), and understanding their actions (Activities). A graphic will illustrate these concepts step by step:\n\n\n\nOverview of WiFi Sensing Metrics: From Pinpointing Locations to Understanding Urban Activities\n\n\n\nLocation: Where Are People at a Specific Time?\n‘Location’ is determined by analyzing the characteristics of WiFi signals at a given time, such as signal frequency and strength. Depending on the situation, we might assign locations based on sensor positions or estimate them in areas between sensors.\n\n\n\n\n\n\nNoteWhy Location Comes Before Count\n\n\n\n\n\nBefore counting, we must pinpoint location. Without knowing where devices are, we just have a total count.\nImagine a room with three people, just like in the diagram above:\n\nWithout location data, counting detected device MAC addresses only tells you there are three devices total.\nWith even rough location data, you can determine that two devices are on the left and one on the right – providing much richer information.\n\n\n\n\n\n\nCount: How Many Over Time?\n‘Count’ focuses on tallying unique MAC addresses to estimate how many people are in an area over different timescales. This method allows for long-term tracking of device presence, offering insights into occupancy trends over extended periods.\n\n\nTrack: Where and When Did They Move?\n‘Track’ involves recording when and where phones are detected. This data lets us follow people’s movements, highlighting the dynamic patterns of city life and offering insights into how different areas are used throughout the day.\n\n\nIdentity: Who Visits Regularly?\nWith ‘Identity’, we analyze data over time to recognize regular visitors and understand their movement habits. This metric provides insights into recurring traffic patterns and the behaviors of different user groups within the city.\n\n\nActivities: What Are They Doing?\n‘Activities’ aims to understand actions by analyzing timing and movement data. We look at how people use different city areas—whether they stay or pass through—observing changes in activity patterns at different times and days.\n\n\n\n\n\n\nWarningA Note on MAC Randomization\n\n\n\nModern mobile devices (iOS since 2014, Android since 2017) randomize their MAC addresses for privacy protection. This affects all metrics to varying degrees:\n\nCount may overestimate if the same person generates multiple MAC addresses\nTrack sequences may break when a device changes its MAC mid-journey\nIdentity classification over extended periods becomes unreliable\n\nThese limitations are most significant in uncontrolled public spaces. In controlled environments (campuses with authenticated WiFi, events with registered devices), the impact is reduced. We discuss mitigation strategies in each chapter.\n\n\n\n\n\n\n\n\nTipValidating with Ground Truth\n\n\n\n\n\nTo assess accuracy, we compare WiFi-derived metrics against ground truth data such as manual counts or GPS logs. Validation methods are discussed in each metric’s chapter.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Metrics Overview</span>"
+    ]
+  },
+  {
+    "objectID": "4-2-location.html",
+    "href": "4-2-location.html",
+    "title": "7  Location",
+    "section": "",
+    "text": "7.1 Setup\nBefore counting or tracking devices, we must know where each device is. This chapter shows how to assign positions to WiFi detections—a foundational step that feeds into all downstream analyses.\nWiFi sensors report detections, not coordinates: “device X was seen at time T with signal strength S.” When coverage areas overlap, the same device appears in multiple sensor logs simultaneously. Localization consolidates these scattered detections into a single position estimate per time window.\nThis requires two decisions:",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Location</span>"
+    ]
+  },
+  {
+    "objectID": "4-2-location.html#setup",
+    "href": "4-2-location.html#setup",
+    "title": "7  Location",
+    "section": "",
+    "text": "Prepare data\nDownload our sample dataset to follow along, or use your own WiFi detection data: sample_loc.zip (15 KB). The ZIP contains three files: wifi.csv (WiFi detections for one device), gps.csv (GPS ground truth), and sensors.csv (sensor coordinates).\n\n\n\n\n\n\nNoteAbout the sample dataset\n\n\n\n\n\nPeriod: October 23 – November 17, 2019 — a single device tracked over 26 days.\nLocation: UNIST campus, Ulsan, South Korea. 25 outdoor sensors in projected coordinates (UTM zone 52N).\nData structure:\n\n\n\n\n\n\n\n\nFile\nRows\nColumns\n\n\n\n\nwifi.csv\n~47,000\nsource_address, timestamp, sensor_name, rssi\n\n\ngps.csv\n~3,000\nsource_address, timestamp, x, y\n\n\nsensors.csv\n25\nsensor_name, x_sensor, y_sensor\n\n\n\nHow we prepared this sample (see scripts/4-0-prep.R):\n\nSelected the device with most detections from the full dataset\nHashed MAC address (SHA-256) for privacy\nConverted RSSI to standard negative dBm values\nExported sensor coordinates in UTM projection\n\nThis sample demonstrates the localization workflow on a single trajectory.\n\n\n\n\n\nLoad packages and data\nLoad required packages:\n\npacman::p_load(tidyverse, lubridate)\n\nLoad the data files:\n\nwifi_raw &lt;- read_csv(\"../data/sample_loc/wifi.csv\", show_col_types = FALSE) |&gt;\n  mutate(timestamp = ymd_hms(timestamp))\nsensor_locations &lt;- read_csv(\"../data/sample_loc/sensors.csv\", show_col_types = FALSE)\n\n\n\n\n\n\n\nTipPreview loaded data\n\n\n\n\n\nWiFi data — probe request detections with signal strength:\n\nhead(wifi_raw, 3)\n\n  source_address           timestamp    sensor_name  rssi\n1 a3c7f9e2b1d4... 2019-10-23 08:15:32 sensor_104_back  -67\n2 a3c7f9e2b1d4... 2019-10-23 08:15:33 sensor_104_back  -71\n3 a3c7f9e2b1d4... 2019-10-23 08:15:35  sensor_112_side  -82\n\nsource_address: SHA-256 hashed device identifier\ntimestamp: Detection time (second precision)\nsensor_name: Which sensor detected this device\nrssi: Signal strength in dBm (closer to zero = stronger signal)\n\nSensors — physical coordinates in UTM zone 52N:\n\nhead(sensor_locations, 3)\n\n      sensor_name x_sensor  y_sensor\n1 sensor_104_back  372891.2 3939842.1\n2 sensor_112_side  372845.7 3939763.4\n3 sensor_206_front 372812.5 3939845.8",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Location</span>"
+    ]
+  },
+  {
+    "objectID": "4-2-location.html#workflow",
+    "href": "4-2-location.html#workflow",
+    "title": "7  Location",
+    "section": "7.2 Workflow",
+    "text": "7.2 Workflow\nThe localization workflow has three steps: create time windows, aggregate detections by sensor, and assign each window to a location. We use 20-second windows with Proximity (strongest signal wins); see Section 7.4 for the rationale.\n\nTime windows\nGroup detections into fixed intervals. All detections within the same 20-second window will be aggregated together:\n\nsampling_window &lt;- 20  # seconds\n\nwifi_windowed &lt;- wifi_raw |&gt;\n  mutate(\n    time_window = floor_date(timestamp, paste(sampling_window, \"seconds\"))\n  )\n\n\n\nAggregate\nWithin each time window, sum RSSI values per sensor. Summing rather than averaging rewards sensors that detected the device more frequently—a proxy for sustained proximity:\n\nwifi_aggregated &lt;- wifi_windowed |&gt;\n  group_by(source_address, time_window, sensor_name) |&gt;\n  summarise(\n    rssi_sum = sum(rssi),\n    weight = sum(100 + rssi),\n    n_detections = n(),\n    .groups = \"drop\"\n  ) |&gt;\n  left_join(sensor_locations, by = \"sensor_name\")\n\nThe weight column converts negative RSSI to positive values (adding 100) for weighted centroid calculations.\n\n\nAssign location\nPick the sensor with strongest cumulative signal (Proximity method):\n\nwifi_located &lt;- wifi_aggregated |&gt;\n  group_by(source_address, time_window) |&gt;\n  slice_max(rssi_sum, n = 1, with_ties = FALSE) |&gt;\n  ungroup() |&gt;\n  select(source_address, time_window, sensor_name, x_sensor, y_sensor)\n\nhead(wifi_located)\n\n  source_address       time_window    sensor_name x_sensor  y_sensor\n1 a3c7f9e2b1d4... 2019-10-23 08:15:20 sensor_104_back  372891.2 3939842.1\n2 a3c7f9e2b1d4... 2019-10-23 08:15:40 sensor_104_back  372891.2 3939842.1\n3 a3c7f9e2b1d4... 2019-10-23 08:16:00  sensor_112_side  372845.7 3939763.4\nEach row is now one device at one location for one time window—ready for counting or tracking.\n\n\n\n\n\n\nTipAlternative: Weighted Centroid\n\n\n\n\n\nProximity assigns devices to discrete sensor locations. If you need continuous coordinates for mapping or distance calculations, compute a weighted average of all detecting sensors:\n\nwifi_centroid &lt;- wifi_aggregated |&gt;\n  group_by(source_address, time_window) |&gt;\n  summarise(\n    x_est = sum(x_sensor * weight, na.rm = TRUE) / sum(weight, na.rm = TRUE),\n    y_est = sum(y_sensor * weight, na.rm = TRUE) / sum(weight, na.rm = TRUE),\n    .groups = \"drop\"\n  )\n\n\\[\nx_{est} = \\frac{\\sum_{i} w_i \\cdot x_i}{\\sum_{i} w_i}\n\\]\nwhere \\(w_i = 100 + RSSI_i\\) (adding 100 converts negative RSSI to positive weights).",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Location</span>"
+    ]
+  },
+  {
+    "objectID": "4-2-location.html#sensor-spacing",
+    "href": "4-2-location.html#sensor-spacing",
+    "title": "7  Location",
+    "section": "7.3 Sensor spacing",
+    "text": "7.3 Sensor spacing\nSensor spacing matters more than localization method. When sensors are too far apart, devices pass through gaps undetected—and no algorithm can compensate for missing data.\nWe tested this by progressively removing sensors from our campus deployment:\n\n\n\nSensor density scenarios: from 25 sensors (~50m spacing) to 4 sensors (~320m spacing).\n\n\nDetection and accuracy both degrade beyond 100m spacing:\n\n\n\nEffect of sensor density on localization accuracy.\n\n\n\n\n\n\n\n\nNoteInterpreting sensor spacing results\n\n\n\n\n\n\n\n\nSpacing\nSensors\nDetection Rate\nMedian Error\n\n\n\n\n~50m\n25\n100%\n~20m\n\n\n~100m\n12\n96%\n~25m\n\n\n~150m\n6\n78%\n~40m\n\n\n~320m\n4\n67%\n~60m\n\n\n\nThe jump from 100m to 150m is where coverage breaks down. At ~50m spacing, we detected every device with ~20m median error. Doubling to ~100m barely affected performance. But beyond that, accuracy degraded rapidly: at ~150m spacing, we missed 22% of devices and error doubled.\nRecommendation: Keep sensors within 100m of each other. If budget forces wider spacing, accept that you’ll miss significant pedestrian traffic—and counts will underestimate accordingly.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Location</span>"
+    ]
+  },
+  {
+    "objectID": "4-2-location.html#sec-method-selection",
+    "href": "4-2-location.html#sec-method-selection",
+    "title": "7  Location",
+    "section": "7.4 Method selection",
+    "text": "7.4 Method selection\nTwo parameters require decisions: time window length and localization method. Our validation shows neither dramatically affects accuracy—sensor density matters far more.\n\nTime window\nWindow length trades off temporal resolution against estimation stability. Short windows (1–10s) capture fine-grained movement but produce noisy estimates; long windows (1–3min) yield stable estimates but blur movement patterns.\nWe tested windows from 1 to 120 seconds against GPS ground truth:\n\n\n\nLocalization error by sampling time. Shaded region (10–30 seconds) marks the practical sweet spot.\n\n\n\n\n\n\n\n\nNoteInterpreting time window results\n\n\n\n\n\nAll three methods (Proximity, Weighted Centroid, Centroid) show similar ~40m median error regardless of window length. Accuracy differences within the 10–30 second range are negligible.\nWe default to 20 seconds as a reasonable balance:\n\nShort enough to capture movement between locations\nLong enough to aggregate multiple detections for stable estimates\nAligns well with typical pedestrian pace (~1.4 m/s = 28m in 20s)\n\n\n\n\n\n\nLocalization method\nWe recommend Proximity (assign to strongest sensor) over Centroid (weighted average):\n\nBoth achieve similar accuracy in our tests\nProximity is simpler: one line of code, no tuning\nOutput is directly interpretable—each detection maps to a single sensor\nWorks well for discrete location analyses (counting at specific points, OD matrices between sensors)\n\n\n\n\n\n\n\nNoteMore on localization methods\n\n\n\n\n\nLi et al. (2021) categorize IoT localization methods by complexity and accuracy:\n\n\n\nLocalization algorithms (Li et al., 2021).\n\n\nFor low-cost outdoor deployments with sparse sensor networks, only Proximity and Centroid are practical. Methods requiring precise timing (ToA, TDoA) or dense arrays (fingerprinting) demand hardware beyond typical WiFi sensing setups.\nReference: Li, You, et al. Toward location-enabled IoT (LE-IoT). IEEE Internet of Things Journal, 2020, 8.6: 4035-4062.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Location</span>"
+    ]
+  },
+  {
+    "objectID": "4-3-count.html",
+    "href": "4-3-count.html",
+    "title": "8  Count",
+    "section": "",
+    "text": "8.1 Setup\nWhile Location identifies where devices are, Count answers how many. This chapter shows how to aggregate WiFi detections into device counts—by sensor, by hour, by day type—to estimate pedestrian activity across your study area.\nThe core metric is unique devices per time window: for each sensor and time period, count distinct MAC addresses. Temporal aggregation reveals daily rhythms; spatial aggregation reveals hotspots. Together, they characterize when and where people concentrate.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Count</span>"
+    ]
+  },
+  {
+    "objectID": "4-3-count.html#setup",
+    "href": "4-3-count.html#setup",
+    "title": "8  Count",
+    "section": "",
+    "text": "Prepare data\nDownload our sample dataset to follow along, or use your own WiFi detection data: sample_main.zip. The ZIP contains WiFi detections from a 26-day campus deployment.\n\n\n\n\n\n\nNoteAbout the sample dataset\n\n\n\n\n\nPeriod: October 21 – November 15, 2019 (26 days) — spanning midterms, a campus interview event, and a school festival.\nLocation: UNIST campus, Ulsan, South Korea. 25 outdoor sensors covered dormitories, academic buildings, cafeteria, library, gym, and bus station.\nData structure:\n\n\n\n\n\n\n\n\nFile\nRows\nColumns\n\n\n\n\nwifi.parquet\n~2.8M\ntimestamp1, source_address, sensor_name\n\n\nsensors.gpkg\n25\nsensor_name, geom\n\n\npoi.gpkg\n5\nname, geom\n\n\n\nHow we prepared this sample (see scripts/4-0-prep.R):\n\nSelected timestamps and sensor data from the full WiFi dataset\nHashed MAC addresses (SHA-256, first 8 characters) for privacy\nExported as Parquet for efficient storage\n\nThe figures in this chapter use the full 26-day dataset.\n\n\n\n\n\nLoad packages and data\nLoad required packages using pacman::p_load(), which installs any missing packages automatically:\n\npacman::p_load(tidyverse, lubridate, arrow, sf, ggspatial)\n\nLoad the data files:\n\nwifi_raw &lt;- read_parquet(\"../data/sample_main/wifi.parquet\")\nsensors &lt;- st_read(\"../data/sample_main/sensors.gpkg\", quiet = TRUE)\n\n\n\n\n\n\n\nTipPreview loaded data\n\n\n\n\n\nWiFi data — raw probe request detections:\n\nhead(wifi_raw, 3)\n\n           timestamp1 source_address    sensor_name\n1 2019-10-21 00:00:12       a3f7b21e    bus_station\n2 2019-10-21 00:05:33       a3f7b21e    bus_station\n3 2019-10-21 00:12:47       c8e42d9a  108_front_outside\n\ntimestamp1: Detection timestamp\nsource_address: SHA-256 hashed device identifier (first 8 characters)\nsensor_name: Which sensor detected this device\n\nSensors — point geometries with location coordinates:\n\nhead(sensors, 3)\n\nSimple feature collection with 3 features and 1 field\nGeometry type: POINT\nGeodetic CRS:  WGS 84\n      sensor_name                      geom\n1     bus_station POINT (129.1918 35.57348)\n2 108_front_outside POINT (129.1887 35.57197)\n3       206_front POINT (129.1875 35.57202)",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Count</span>"
+    ]
+  },
+  {
+    "objectID": "4-3-count.html#workflow",
+    "href": "4-3-count.html#workflow",
+    "title": "8  Count",
+    "section": "8.2 Workflow",
+    "text": "8.2 Workflow\n\nHourly counts\nAggregate detections into hourly counts by counting unique devices across all sensors:\n\nhourly_counts &lt;- wifi_raw |&gt;\n  mutate(\n    hour = floor_date(timestamp1, \"hour\"),\n    day_type = if_else(wday(timestamp1) %in% c(1, 7), \"Weekend\", \"Weekday\")\n  ) |&gt;\n  group_by(hour, day_type) |&gt;\n  summarise(n_devices = n_distinct(source_address), .groups = \"drop\")\n\nhead(hourly_counts)\n\n# A tibble: 6 x 3\n  hour                day_type n_devices\n  &lt;dttm&gt;              &lt;chr&gt;        &lt;int&gt;\n1 2019-10-23 00:00:00 Weekday        847\n2 2019-10-23 01:00:00 Weekday        612\n3 2019-10-23 02:00:00 Weekday        498\n4 2019-10-23 03:00:00 Weekday        421\n5 2019-10-23 04:00:00 Weekday        389\n6 2019-10-23 05:00:00 Weekday        456\nThe day_type column distinguishes weekday from weekend patterns—university campuses show pronounced differences between the two.\n\n\nAverage daily pattern\nCollapse across days to compute the typical hourly rhythm:\n\nhourly_pattern &lt;- hourly_counts |&gt;\n  mutate(hour_of_day = hour(hour)) |&gt;\n  group_by(hour_of_day, day_type) |&gt;\n  summarise(\n    mean_devices = mean(n_devices),\n    sd_devices = sd(n_devices),\n    .groups = \"drop\"\n  )",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Count</span>"
+    ]
+  },
+  {
+    "objectID": "4-3-count.html#temporal-patterns",
+    "href": "4-3-count.html#temporal-patterns",
+    "title": "8  Count",
+    "section": "8.3 Temporal patterns",
+    "text": "8.3 Temporal patterns\nPlot the average hourly pattern with standard deviation bands:\n\nggplot(hourly_pattern, aes(x = hour_of_day, y = mean_devices,\n                           color = day_type, fill = day_type)) +\n  geom_ribbon(aes(ymin = pmax(0, mean_devices - sd_devices),\n                  ymax = mean_devices + sd_devices),\n              alpha = 0.2, color = NA) +\n  geom_line(linewidth = 1) +\n  geom_point(size = 2) +\n  scale_x_continuous(breaks = seq(0, 23, by = 3)) +\n  scale_color_manual(values = c(\"Weekday\" = \"#2c7bb6\", \"Weekend\" = \"#d7191c\")) +\n  scale_fill_manual(values = c(\"Weekday\" = \"#2c7bb6\", \"Weekend\" = \"#d7191c\")) +\n  labs(x = \"Hour of Day\", y = \"Unique Devices Detected\", color = NULL, fill = NULL) +\n  theme_minimal()\n\n\n\n\nHourly pattern by day type. Shaded bands show ±1 standard deviation.\n\n\n\n\n\n\n\n\nNoteInterpreting the temporal pattern\n\n\n\n\n\nThe weekday curve shows a clear work schedule: activity ramps up sharply after 7am, plateaus from 10am to 6pm at ~2,700 unique devices per hour, then tapers into the evening. Weekends are flatter, with activity spread more evenly across daylight hours and plateauing at ~1,000 devices—roughly 2.5× fewer than weekdays.\nKey observations:\n\nPeak timing: Weekdays peak at noon (lunch hour); weekends peak later around 2-3pm\nMorning ramp: Weekdays show steep 7-9am increase (commute arrival); weekends rise gradually\nEvening decay: Both patterns decline after 6pm, but weekends maintain higher late-night activity (social activities)\n\n\n\n\n\n\n\n\n\n\nTipCalendar view for multi-week deployments\n\n\n\n\n\nFor deployments spanning multiple weeks, a calendar-style small multiples plot reveals day-to-day variability. Special events, holidays, or weather disruptions appear as anomalies against the regular weekly rhythm.\n\ndaily_hourly &lt;- wifi_raw |&gt;\n  mutate(\n    date = as.Date(timestamp1),\n    hour_of_day = hour(timestamp1)\n  ) |&gt;\n  group_by(date, hour_of_day) |&gt;\n  summarise(n_devices = n_distinct(source_address), .groups = \"drop\")\n\nggplot(daily_hourly, aes(x = hour_of_day, y = n_devices)) +\n  geom_line(linewidth = 0.5) +\n  facet_wrap(~ date, ncol = 7, scales = \"free_y\") +\n  labs(x = \"Hour\", y = \"Devices\") +\n  theme_minimal()\n\n\n\n\n26-day calendar view: each panel shows one day’s hourly pattern.\n\n\nThe calendar view reveals which days deviate from the typical pattern. Midterm exam weeks, campus events, or holidays become visible as unusual curves among the regular rhythm.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Count</span>"
+    ]
+  },
+  {
+    "objectID": "4-3-count.html#spatial-patterns",
+    "href": "4-3-count.html#spatial-patterns",
+    "title": "8  Count",
+    "section": "8.4 Spatial patterns",
+    "text": "8.4 Spatial patterns\nCounts vary by location. Some sensors cover high-traffic corridors; others monitor quieter areas. Mapping counts by sensor reveals spatial hotspots.\n\nSensor-level aggregation\nCount unique devices per sensor, filtering to midday hours (11am–2pm) when activity is most consistent:\n\nsensor_counts &lt;- wifi_raw |&gt;\n  mutate(\n    day_type = if_else(wday(timestamp1) %in% c(1, 7), \"Weekend\", \"Weekday\"),\n    hour_of_day = hour(timestamp1)\n  ) |&gt;\n  filter(hour_of_day &gt;= 11 & hour_of_day &lt;= 14) |&gt;\n  group_by(sensor_name, day_type) |&gt;\n  summarise(n_devices = n_distinct(source_address), .groups = \"drop\")\n\n\n\nMap visualization\nJoin counts with sensor coordinates and plot. Circle size encodes device count:\n\nsensors_with_counts &lt;- sensors |&gt;\n  left_join(sensor_counts, by = \"sensor_name\")\n\nggplot() +\n  annotation_map_tile(type = \"osm\", zoom = 15) +\n  geom_sf(data = sensors_with_counts, aes(size = n_devices),\n          alpha = 0.8, color = \"#d7191c\") +\n  scale_size_continuous(range = c(2, 8), name = \"Devices\") +\n  facet_wrap(~ day_type) +\n  theme_void()\n\n\n\n\nSensor counts during midday (11:00–14:00), weekday vs weekend.\n\n\n\n\n\n\n\n\nNoteInterpreting the spatial pattern\n\n\n\n\n\nThe spatial contrast reveals functional zones:\n\nDormitory sensors: Similar counts on weekdays and weekends—residents are present regardless of schedule\nEngineering building sensors: Pronounced weekday peaks—students commute for classes then disperse\nCafeteria sensors: High traffic on both day types, but weekday lunch crowds are larger\nOff-campus shop sensors: Weekday peaks reflect student errands between classes\n\nThe map effectively visualizes how different campus zones serve different functions: residential areas maintain steady occupancy while academic areas pulse with the class schedule.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Count</span>"
+    ]
+  },
+  {
+    "objectID": "4-3-count.html#adjusting-for-mac-randomization",
+    "href": "4-3-count.html#adjusting-for-mac-randomization",
+    "title": "8  Count",
+    "section": "8.5 Adjusting for MAC randomization",
+    "text": "8.5 Adjusting for MAC randomization\nRaw counts overestimate actual people because randomized MACs generate multiple addresses per device. We can approximate a correction using the ratio of non-random to total MAC addresses.\n\nIdentify random MACs\nThe second character of a MAC address indicates whether it’s locally administered (random) or globally unique (manufacturer-assigned):\n\nis_random_mac &lt;- function(mac) {\n  second_char &lt;- substr(mac, 2, 2)\n  second_char %in% c(\"2\", \"3\", \"6\", \"7\", \"a\", \"b\", \"e\", \"f\",\n                     \"A\", \"B\", \"E\", \"F\")\n}\n\nwifi_raw &lt;- wifi_raw |&gt;\n  mutate(is_random = is_random_mac(source_address))\n\n\n\nCalculate adjustment ratio\n\nnon_random_ratio &lt;- wifi_raw |&gt;\n  summarise(ratio = mean(!is_random)) |&gt;\n  pull(ratio)\n\n# Adjusted count = raw count * non_random_ratio\n\n\n\n\n\n\n\nWarningProxy, not precise correction\n\n\n\nThis adjustment assumes non-random devices represent the “true” population structure and that random MAC inflation is uniform across time and space. In controlled environments (campus WiFi, event registration), non-random ratios are higher and this adjustment is more reliable. For public deployments with high randomization rates, treat adjusted counts as rough estimates.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Count</span>"
+    ]
+  },
+  {
+    "objectID": "4-4-track.html",
+    "href": "4-4-track.html",
+    "title": "9  Track",
+    "section": "",
+    "text": "9.1 Setup\nWhile Count answers “how many devices?”, Track answers “where did they go?” This chapter shows how to build origin-destination (OD) matrices and flow maps from WiFi detection data, revealing movement corridors across your study area.\nThe core concept is the trip: a sequence of detections for one device, bounded by gaps of inactivity. We define a 30-minute threshold—if a device isn’t detected for 30+ minutes, subsequent detections start a new trip. Each trip has an origin (first sensor) and destination (last sensor). Aggregating thousands of these OD pairs reveals which routes dominate and how they shift by time of day or day of week.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Track</span>"
+    ]
+  },
+  {
+    "objectID": "4-4-track.html#setup",
+    "href": "4-4-track.html#setup",
+    "title": "9  Track",
+    "section": "",
+    "text": "Prepare data\nDownload our sample dataset to follow along, or use your own WiFi detection data: sample_main.zip. The ZIP contains three files: wifi.parquet (WiFi detections), sensors.gpkg (sensor locations), and poi.gpkg (campus landmarks).\n\n\n\n\n\n\nNoteAbout the sample dataset\n\n\n\n\n\nPeriod: October 21 – November 15, 2019 (26 days) — spanning midterms, a campus interview event, and a school festival.\nLocation: UNIST campus, Ulsan, South Korea. 25 outdoor sensors covered dormitories, academic buildings, cafeteria, library, gym, and bus station.\nData structure:\n\n\n\n\n\n\n\n\nFile\nRows\nColumns\n\n\n\n\nwifi.parquet\n~2.8M\ntimestamp1, source_address, sensor_name\n\n\nsensors.gpkg\n25\nsensor_name, geom\n\n\npoi.gpkg\n5\nname, geom\n\n\n\nHow we prepared this sample (see scripts/4-0-prep.R):\n\nSelected timestamps and sensor data from the full WiFi dataset\nHashed MAC addresses (SHA-256, first 8 characters) for privacy\nExported as Parquet for efficient storage\n\nThe figures in this chapter use the full 26-day dataset.\n\n\n\n\n\nLoad packages and data\nLoad required packages using pacman::p_load(), which installs any missing packages automatically:\n\npacman::p_load(tidyverse, lubridate, arrow, sf, ggmap, ggrepel)\n\nLoad the data files:\n\nwifi_raw &lt;- read_parquet(\"../data/sample_main/wifi.parquet\")\nsensors &lt;- st_read(\"../data/sample_main/sensors.gpkg\", quiet = TRUE)\npoi &lt;- st_read(\"../data/sample_main/poi.gpkg\", quiet = TRUE)\n\n\n\nConfigure basemap\nFlow maps overlay movement data on a geographic basemap. Choose one of these options:\n\nGoogle MapsOpenStreetMap\n\n\nFor satellite imagery, register a Google Maps API key:\n\nregister_google(key = \"YOUR_API_KEY\")\n\nbbox &lt;- st_bbox(sensors)\nbase_map &lt;- get_map(\n  location = c(lon = mean(bbox[c(1,3)]), lat = mean(bbox[c(2,4)])),\n  zoom = 16, maptype = \"satellite\", source = \"google\"\n)\n\n\n\nFor a free alternative (no API key required):\n\nbbox &lt;- st_bbox(sensors)\nbase_map &lt;- get_stadiamap(\n  bbox = c(left = bbox[\"xmin\"], bottom = bbox[\"ymin\"],\n           right = bbox[\"xmax\"], top = bbox[\"ymax\"]),\n  zoom = 16, maptype = \"stamen_toner_lite\"\n)\n\n\n\n\nExtract sensor coordinates for plotting:\n\nsensor_coords &lt;- sensors |&gt;\n  st_coordinates() |&gt;\n  as_tibble() |&gt;\n  bind_cols(sensors |&gt; st_drop_geometry() |&gt; select(sensor_name))\n\n\n\n\n\n\n\nTipPreview loaded data\n\n\n\n\n\nWiFi data — raw probe request detections:\n\nhead(wifi_raw, 3)\n\n           timestamp1 source_address sensor_name\n1 2019-11-06 21:30:00       b81d6d3a bus_station\n2 2019-11-06 21:50:00       b81d6d3a bus_station\n3 2019-11-07 06:00:00       b81d6d3a bus_station\n\ntimestamp1: Detection time (aggregated to 10-minute windows)\nsource_address: SHA-256 hashed device identifier (first 8 characters)\nsensor_name: Which sensor detected this device\n\nSensors — point geometries with location coordinates:\n\nhead(sensors, 5)\n\nSimple feature collection with 5 features and 1 field\nGeometry type: POINT\nGeodetic CRS:  WGS 84\n      sensor_name                      geom\n1     bus_station POINT (129.1918 35.57348)\n2 108_front_outside POINT (129.1887 35.57197)\n3       206_front POINT (129.1875 35.57202)\n4        112_side  POINT (129.187 35.57127)\n5        104_back  POINT (129.191 35.57212)\nPOI — reference labels for the map:\n\npoi\n\nSimple feature collection with 5 features and 1 field\nGeometry type: POINT\nGeodetic CRS:  WGS 84\n               name                      geom\n1         Dormitory POINT (129.1878 35.57708)\n2           Library  POINT (129.1879 35.5738)\n3       Bus Station POINT (129.1919 35.57353)\n4 Engineering Bldg. POINT (129.1897 35.57187)\n5  Off-campus shops  POINT (129.191 35.57672)",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Track</span>"
+    ]
+  },
+  {
+    "objectID": "4-4-track.html#workflow",
+    "href": "4-4-track.html#workflow",
+    "title": "9  Track",
+    "section": "9.2 Workflow",
+    "text": "9.2 Workflow\n\nDefine trips\nFirst, segment the raw detections into trips. For each device, calculate the time gap between consecutive detections. When the gap exceeds 30 minutes, start a new trip:\n\ngap_threshold &lt;- 30  # minutes\n\ntrips &lt;- wifi_raw |&gt;\n  arrange(source_address, timestamp1) |&gt;\n  group_by(source_address) |&gt;\n  mutate(\n    time_gap = as.numeric(difftime(timestamp1, lag(timestamp1), units = \"mins\")),\n    new_trip = is.na(time_gap) | time_gap &gt; gap_threshold,\n    trip_id = cumsum(new_trip)\n  ) |&gt;\n  ungroup()\n\n\n\nExtract OD pairs\nFor each trip, extract the origin (first sensor) and destination (last sensor). Filter out stationary trips (origin = destination) and single-detection trips:\n\nod_pairs &lt;- trips |&gt;\n  group_by(source_address, trip_id) |&gt;\n  summarise(\n    origin = first(sensor_name),\n    destination = last(sensor_name),\n    trip_start = min(timestamp1),\n    trip_end = max(timestamp1),\n    n_detections = n(),\n    .groups = \"drop\"\n  ) |&gt;\n  filter(\n    origin != destination,\n    n_detections &gt;= 2\n  )\n\n\n\nBuild OD matrix\nCount trips between each sensor pair and compute transition probabilities. This creates an OD matrix showing how traffic flows between locations:\n\nod_counts &lt;- od_pairs |&gt;\n  count(origin, destination, name = \"n_trips\")\n\nod_probs &lt;- od_counts |&gt;\n  group_by(origin) |&gt;\n  mutate(\n    total_from = sum(n_trips),\n    prob = n_trips / total_from\n  ) |&gt;\n  ungroup()\n\nod_probs |&gt;\n  filter(origin == \"104_back\") |&gt;\n  arrange(desc(n_trips)) |&gt;\n  head(3)\n\n# A tibble: 3 x 5\n  origin   destination n_trips total_from   prob\n  &lt;chr&gt;    &lt;chr&gt;         &lt;int&gt;      &lt;int&gt;  &lt;dbl&gt;\n1 104_back bus_station    4058      10642  0.381\n2 104_back lake           1845      10642  0.173\n3 104_back TMB_back       1059      10642  0.100\nFrom the 104_back sensor (near dormitories), 38% of outbound trips go to the bus station—the main exit route. Another 17% head to the lake, a recreational area.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Track</span>"
+    ]
+  },
+  {
+    "objectID": "4-4-track.html#flow-map",
+    "href": "4-4-track.html#flow-map",
+    "title": "9  Track",
+    "section": "9.3 Flow map",
+    "text": "9.3 Flow map\nFlow maps display OD pairs on a geographic basemap, with arrows showing direction and line thickness encoding volume. This visualization reveals which corridors carry the most traffic.\nSelect the top OD pairs and join with sensor coordinates:\n\ntop_n &lt;- 5\n\nedges_top &lt;- od_probs |&gt;\n  slice_max(n_trips, n = top_n) |&gt;\n  left_join(sensor_coords, by = c(\"origin\" = \"sensor_name\")) |&gt;\n  rename(x_from = X, y_from = Y) |&gt;\n  left_join(sensor_coords, by = c(\"destination\" = \"sensor_name\")) |&gt;\n  rename(x_to = X, y_to = Y)\n\nedges_top |&gt; select(origin, destination, n_trips)\n\n# A tibble: 5 x 3\n  origin              destination n_trips\n  &lt;chr&gt;               &lt;chr&gt;         &lt;int&gt;\n1 cafeteria_dorm_side TMB_back       4638\n2 108_front_outside   lake           4243\n3 104_back            bus_station    4058\n4 cafeteria_dorm_side gym_front      3623\n5 cafeteria_dorm_side parking_dorm   3496\nPlot the flow map with curved arrows:\n\n# Get labels for sensors in top flows\nod_sensors &lt;- unique(c(edges_top$origin, edges_top$destination))\nsensor_labels &lt;- sensor_coords |&gt;\n  filter(sensor_name %in% od_sensors)\n\nggmap(base_map, darken = c(0.3, \"white\")) +\n  geom_curve(data = edges_top,\n             aes(x = x_from, y = y_from, xend = x_to, yend = y_to),\n             linewidth = edges_top$n_trips / max(edges_top$n_trips) * 3,\n             color = \"#2c7bb6\", curvature = 0.3, alpha = 0.85,\n             arrow = arrow(length = unit(0.2, \"cm\"), type = \"closed\")) +\n  geom_point(data = sensor_labels, aes(x = X, y = Y),\n             size = 2.5, color = \"#d7191c\") +\n  geom_text_repel(data = sensor_labels, aes(x = X, y = Y, label = sensor_name),\n                  size = 2.5, fontface = \"bold.italic\") +\n  theme_void()\n\n\n\n\nTop 5 OD flows across UNIST campus, Nov 6-12, 2019. Arrow thickness indicates trip volume.\n\n\n\n\n\n\n\n\nNoteInterpreting the flow patterns\n\n\n\n\n\nThe top three corridors reveal campus structure:\n\ncafeteria_dorm_side → TMB_back (4,638 trips): Dining-to-research building, the dominant daily routine\n108_front_outside → lake (4,243 trips): Residences to lakeside recreation\n104_back → bus_station (4,058 trips): Dormitories to public transit exit\n\nThe cafeteria and dormitory areas function as central hubs, with other destinations branching outward.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Track</span>"
+    ]
+  },
+  {
+    "objectID": "4-4-track.html#temporal-patterns",
+    "href": "4-4-track.html#temporal-patterns",
+    "title": "9  Track",
+    "section": "9.4 Temporal patterns",
+    "text": "9.4 Temporal patterns\nMovement patterns vary by time—weekdays vs weekends, morning vs evening. Segmenting OD pairs by temporal context reveals how space usage shifts with daily and weekly rhythms.\n\nWeekday vs Weekend\nSplit OD pairs by day type to compare routine weekday flows against sparser weekend patterns:\n\nod_by_daytype &lt;- od_pairs |&gt;\n  mutate(day_type = if_else(wday(trip_start) %in% c(1, 7), \"Weekend\", \"Weekday\")) |&gt;\n  count(origin, destination, day_type, name = \"n_trips\")\n\n# Top 3 routes per day type\nod_by_daytype |&gt;\n  group_by(day_type) |&gt;\n  slice_max(n_trips, n = 3)\n\n# A tibble: 6 x 4\n  day_type origin              destination  n_trips\n  &lt;chr&gt;    &lt;chr&gt;               &lt;chr&gt;          &lt;int&gt;\n1 Weekday  108_front_outside   lake            3981\n2 Weekday  cafeteria_dorm_side TMB_back        3731\n3 Weekday  104_back            bus_station     3493\n4 Weekend  cafeteria_dorm_side TMB_back         907\n5 Weekend  cafeteria_dorm_side parking_dorm     585\n6 Weekend  104_back            bus_station      565\n\n\n\nTop 15 OD flows by day type, Nov 6-12, 2019. Weekday (left) vs Weekend (right).\n\n\n\n\n\n\n\n\nNoteWeekday vs Weekend differences\n\n\n\n\n\n\n\n\nRank\nWeekday\nWeekend\n\n\n\n\n1\n108_front → lake (3,981)\ncafeteria → TMB (907)\n\n\n2\ncafeteria → TMB (3,731)\ncafeteria → parking (585)\n\n\n3\n104_back → bus (3,493)\n104_back → bus (565)\n\n\n\nKey observations:\n\nVolume: Weekday top route (3,981 trips) is 7× higher than weekend top (907)\nTransit decline: Bus station drops from #3 weekday destination—fewer commuters on weekends\nParking rise: Emerges as #2 on weekends—residents switch to personal vehicles\nResearch persistence: Cafeteria → TMB remains #1 even on weekends, likely graduate students\n\n\n\n\n\n\nMorning vs Evening\nComparing morning (7-10am) and evening (5-8pm) flows on weekdays reveals commute directionality:\n\nod_time_period &lt;- od_pairs |&gt;\n  filter(wday(trip_start) %in% 2:6) |&gt;  # weekdays only\n  mutate(\n    hour = hour(trip_start),\n    time_period = case_when(\n      hour &gt;= 7 & hour &lt; 10 ~ \"Morning (7-10)\",\n      hour &gt;= 17 & hour &lt; 20 ~ \"Evening (17-20)\",\n      TRUE ~ NA_character_\n    )\n  ) |&gt;\n  filter(!is.na(time_period)) |&gt;\n  count(origin, destination, time_period, name = \"n_trips\")\n\n# Top 3 routes per time period\nod_time_period |&gt;\n  group_by(time_period) |&gt;\n  slice_max(n_trips, n = 3)\n\n# A tibble: 6 x 4\n  time_period     origin              destination n_trips\n  &lt;chr&gt;           &lt;chr&gt;               &lt;chr&gt;         &lt;int&gt;\n1 Evening (17-20) 104_back            bus_station    1028\n2 Evening (17-20) 108_front_outside   lake            757\n3 Evening (17-20) cafeteria_dorm_side TMB_back        644\n4 Morning (7-10)  cafeteria_dorm_side TMB_back        550\n5 Morning (7-10)  104_back            bus_station     444\n6 Morning (7-10)  108_front_outside   lake            384\n\n\n\nTop 15 weekday OD flows by time period, Nov 6-12, 2019. Morning 7-10am (left) vs Evening 5-8pm (right).\n\n\n\n\n\n\n\n\nNoteMorning vs Evening asymmetry\n\n\n\n\n\n\n\n\nRank\nMorning (7-10)\nEvening (17-20)\n\n\n\n\n1\ncafeteria → TMB (550)\n104_back → bus (1,028)\n\n\n2\n104_back → bus (444)\n108_front → lake (757)\n\n\n3\n108_front → lake (384)\ncafeteria → TMB (644)\n\n\n\nThe data reveals directional asymmetry:\n\nBus station: Evening volume (1,028) is 2.3× morning (444)—more departures than arrivals\nMorning: Dispersal from dormitories to classes, research buildings, dining\nEvening: Convergence toward transit exit\n\nMany students arrive by other means (walking, drop-off) but depart by bus. The campus functions as a daytime destination with a transit-dependent evening exodus.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Track</span>"
+    ]
+  },
+  {
+    "objectID": "4-5-identity.html",
+    "href": "4-5-identity.html",
+    "title": "10  Identity",
+    "section": "",
+    "text": "10.1 Setup\nWhile Track reveals where devices go, Identity answers who they are. This chapter shows how to classify detected devices by visit frequency—distinguishing campus regulars from one-time visitors based purely on how often they appear.\nThe core insight: visit frequency reveals identity. A device detected on 20+ days is likely a resident; one seen only once is probably passing through. If this distinction is meaningful, we should see clear behavioral differences across multiple dimensions: when each group appears, where they concentrate, how widely they range, and how they move through the campus.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Identity</span>"
+    ]
+  },
+  {
+    "objectID": "4-5-identity.html#setup",
+    "href": "4-5-identity.html#setup",
+    "title": "10  Identity",
+    "section": "",
+    "text": "Prepare data\nThis chapter uses the same dataset as Count and Track: sample_main.zip. The ZIP contains WiFi detections from a 26-day campus deployment.\n\n\n\n\n\n\nNoteAbout the sample dataset\n\n\n\n\n\nPeriod: October 21 – November 15, 2019 (26 days) — spanning midterms, a campus interview event, and a school festival.\nLocation: UNIST campus, Ulsan, South Korea. 25 outdoor sensors covered dormitories, academic buildings, cafeteria, library, gym, and bus station.\nKey events during this period:\n\n\n\nEvent\nDates\nExpected visitors\n\n\n\n\nMidterm exams\nOct 21-25\nRegular students\n\n\nCampus interview\nNov 1-2\nHigh school students + parents\n\n\nSchool festival\nNov 3-5\nMixed (students + some outsiders)\n\n\n\nThe campus interview brings prospective students and their families for tours—a natural experiment for detecting outsiders.\n\n\n\n\n\nLoad packages and data\nLoad required packages using pacman::p_load(), which installs any missing packages automatically:\n\npacman::p_load(tidyverse, lubridate, arrow, sf)\n\nLoad the data and filter to the 26-day study period:\n\nwifi &lt;- read_parquet(\"../data/sample_main/wifi.parquet\") |&gt;\n  mutate(date = as_date(timestamp1), hour = hour(timestamp1)) |&gt;\n  filter(date &gt;= as_date(\"2019-10-21\"), date &lt;= as_date(\"2019-11-15\"))\n\nsensors &lt;- st_read(\"../data/sample_main/sensors.gpkg\", quiet = TRUE)\n\n\n\n\n\n\n\nTipPreview loaded data\n\n\n\n\n\n\nhead(wifi, 3)\n\n           timestamp1 source_address    sensor_name       date hour\n1 2019-10-21 00:00:12       a3f7b21e    bus_station 2019-10-21    0\n2 2019-10-21 00:05:33       a3f7b21e    bus_station 2019-10-21    0\n3 2019-10-21 00:12:47       c8e42d9a  108_front_outside 2019-10-21    0\n\ntimestamp1: Detection timestamp\nsource_address: SHA-256 hashed device identifier (first 8 characters)\nsensor_name: Which sensor detected this device\ndate: Date extracted from timestamp\nhour: Hour of day (0–23)",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Identity</span>"
+    ]
+  },
+  {
+    "objectID": "4-5-identity.html#classify-by-visit-frequency",
+    "href": "4-5-identity.html#classify-by-visit-frequency",
+    "title": "10  Identity",
+    "section": "10.2 Classify by Visit Frequency",
+    "text": "10.2 Classify by Visit Frequency\nWiFi sensors detect every device that broadcasts a probe request—residents, commuters, delivery drivers, and one-time visitors alike. To distinguish these populations, we use the simplest available signal: how many of the 26 deployment days each device was observed. A device seen on a single day is likely passing through; one detected on 20+ days is almost certainly a campus regular.\n\nClassify devices\nWe count the number of unique days per device. The resulting distribution is sharply long-tailed: over half of all devices (54%) appear on just a single day, while only 14% persist for 20+ days. Based on this natural structure, we define three categories—One-time (1 day), Occasional (2–19 days), and Regular (20+ days)—and join the labels back to the detection data.\n\ndevice_days &lt;- wifi |&gt;\n  group_by(source_address) |&gt;\n  summarise(n_days = n_distinct(date)) |&gt;\n  mutate(freq_type = case_when(\n    n_days == 1 ~ \"One-time\",\n    n_days &gt;= 20 ~ \"Regular\",\n    TRUE ~ \"Occasional\"\n  ))\n\nwifi &lt;- wifi |&gt;\n  left_join(device_days |&gt; select(source_address, freq_type), by = \"source_address\")\n\n# A tibble: 3 x 2\n  freq_type       n\n  &lt;chr&gt;       &lt;int&gt;\n1 One-time    13354\n2 Occasional   7874\n3 Regular      3444\n\n\n\nShow code\n\ndist_data &lt;- count(device_days, n_days) |&gt;\n  mutate(freq_group = factor(\n    case_when(n_days == 1 ~ \"One-time\", n_days &gt;= 20 ~ \"Regular\", TRUE ~ \"Occasional\"),\n    levels = c(\"One-time\", \"Occasional\", \"Regular\")\n  ))\n\nggplot(dist_data, aes(n_days, n, fill = freq_group)) +\n  geom_col(width = 0.8) +\n  scale_fill_manual(\n    values = c(\"One-time\" = \"#d7191c\", \"Occasional\" = \"gray55\", \"Regular\" = \"#2c7bb6\"),\n    name = NULL) +\n  scale_x_continuous(breaks = c(1, 5, 10, 15, 20, 26)) +\n  scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.12))) +\n  labs(title = \"Distribution of Visit Frequency\",\n       subtitle = \"Most devices appear once; 14% persist for 20+ days\",\n       x = \"Days Observed\", y = NULL) +\n  theme_bw()\n\nNow we compare the two extremes—One-time vs Regular—across three behavioral dimensions: temporal patterns, spatial patterns, and movement flows.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Identity</span>"
+    ]
+  },
+  {
+    "objectID": "4-5-identity.html#behavioral-differences",
+    "href": "4-5-identity.html#behavioral-differences",
+    "title": "10  Identity",
+    "section": "10.3 Behavioral Differences",
+    "text": "10.3 Behavioral Differences\n\nTemporal pattern\nOne-time visitors cluster tightly around midday (peaking at ~10% of their devices at noon), concentrated within business hours. Regulars, by contrast, spread evenly across the full 24 hours at ~5% per hour—a flat profile reflecting on-campus residents who are detectable even at night.\n\n\n\nShow code\n\nwifi_freq &lt;- wifi |&gt; filter(freq_type %in% c(\"One-time\", \"Regular\"))\n\nh_freq &lt;- wifi_freq |&gt;\n  group_by(freq_type, hour) |&gt;\n  summarise(n = n_distinct(source_address), .groups = \"drop\") |&gt;\n  group_by(freq_type) |&gt;\n  mutate(pct = n / sum(n) * 100)\n\nggplot(h_freq, aes(hour, pct, color = freq_type)) +\n  geom_line(linewidth = 0.8) + geom_point(size = 1.8) +\n  scale_x_continuous(breaks = c(0, 4, 8, 12, 16, 20, 23),\n                     labels = c(\"0AM\", \"4\", \"8\", \"12PM\", \"16\", \"20\", \"23\")) +\n  scale_y_continuous(breaks = seq(2, 10, 2)) +\n  scale_color_manual(values = c(\"One-time\" = \"#d7191c\", \"Regular\" = \"#2c7bb6\"), name = NULL) +\n  labs(title = \"Hourly Detection Rates\",\n       subtitle = \"One-time visitors peak at midday; regulars spread evenly\",\n       x = NULL, y = \"%\") +\n  theme_bw()\n\n\n\nSpatial pattern\nThe difference map reveals a clear spatial divide. One-time visitors over-index at transit-oriented locations—bus_station (+4.8 pp), 203_front (+3.9 pp), and parking_sport (+2.5 pp)—all campus entry points or building fronts suited to brief visits. Regulars dominate residential and daily-life sensors: dorm_front (+4.3 pp), parking_dorm (+3.8 pp), and cafeteria_dorm_side (+2.6 pp). The map effectively separates “passing through” locations from “living here” locations.\n\n\n\nShow code\n\ns_freq_wide &lt;- wifi_freq |&gt;\n  count(freq_type, sensor_name) |&gt;\n  group_by(freq_type) |&gt;\n  mutate(pct = n / sum(n) * 100) |&gt;\n  ungroup() |&gt;\n  select(freq_type, sensor_name, pct) |&gt;\n  pivot_wider(names_from = freq_type, values_from = pct, values_fill = 0) |&gt;\n  rename(pct_onetime = `One-time`, pct_regular = Regular) |&gt;\n  mutate(diff = pct_onetime - pct_regular,\n         abs_diff = abs(diff),\n         dominant = if_else(diff &gt; 0, \"One-time\", \"Regular\")) |&gt;\n  left_join(sensor_coords, by = \"sensor_name\")\n\nggmap(base_map, darken = c(0.3, \"white\")) +\n  geom_point(data = sensor_coords, aes(x = X, y = Y),\n             size = 1.2, color = \"grey60\", inherit.aes = FALSE) +\n  geom_point(data = s_freq_wide, aes(x = X, y = Y, size = abs_diff, color = dominant),\n             alpha = 0.75, inherit.aes = FALSE) +\n  scale_size_continuous(range = c(1.5, 10), name = \"% point\\ndifference\") +\n  scale_color_manual(values = c(\"One-time\" = \"#d7191c\", \"Regular\" = \"#2c7bb6\"),\n                     name = \"Higher share\") +\n  labs(title = \"Spatial Distribution\",\n       subtitle = \"One-time visitors concentrate at transit; regulars at residential\") +\n  theme_bw()\n\n\n\nSpatial coverage\nBeyond where devices go, we can ask how widely they range. On each visit (device-day), we count how many distinct sensors detected the device. Regulars visit a median of 10 sensors per day with a long upper tail; one-time visitors visit only 3, tightly clustered near the minimum. This coverage gap reflects fundamentally different engagement with the campus—regulars traverse multiple zones (dormitory, cafeteria, academic buildings, recreation) while one-time visitors touch only a handful of sensors near entry points.\n\n\n\nShow code\n\nvisit_stats &lt;- wifi_freq |&gt;\n  group_by(source_address, date, freq_type) |&gt;\n  summarise(\n    n_sensors = n_distinct(sensor_name),\n    .groups = \"drop\"\n  )\n\nggplot(visit_stats, aes(x = freq_type, y = n_sensors, fill = freq_type)) +\n  geom_violin(alpha = 0.7, draw_quantiles = c(0.25, 0.5, 0.75)) +\n  geom_boxplot(width = 0.12, fill = \"white\", alpha = 0.8, outlier.shape = NA) +\n  scale_fill_manual(values = c(\"One-time\" = \"#d7191c\", \"Regular\" = \"#2c7bb6\")) +\n  scale_y_continuous(breaks = seq(0, 25, 5)) +\n  labs(title = \"Spatial Coverage per Day\",\n       subtitle = \"Regulars visit median 10 sensors; one-time visitors only 3\",\n       x = NULL, y = \"Number of sensors\") +\n  theme_bw() +\n  theme(legend.position = \"none\")\n\n\n\nMovement pattern\nBoth groups share cafeteria_dorm_side → TMB_back as their top route, but regulars generate 10× more volume (11,063 vs 1,076 trips). One-time visitors’ flows are transit-oriented—two of their top seven routes end at bus_station, tracing an arrival-visit-departure arc. Regulars show campus-life patterns: multiple routes to TMB_back (research building) and two routes to the lake (recreation), destinations one-time visitors rarely reach.\n\n\n\nShow code\n\nod_freq &lt;- wifi_freq |&gt;\n  arrange(source_address, timestamp1) |&gt;\n  group_by(source_address) |&gt;\n  mutate(gap = as.numeric(difftime(timestamp1, lag(timestamp1), units = \"mins\")),\n         trip_id = cumsum(is.na(gap) | gap &gt; 30)) |&gt;\n  group_by(source_address, trip_id, freq_type) |&gt;\n  summarise(origin = first(sensor_name), destination = last(sensor_name),\n            n_det = n(), .groups = \"drop\") |&gt;\n  filter(origin != destination, n_det &gt;= 2) |&gt;\n  count(freq_type, origin, destination, name = \"n_trips\") |&gt;\n  group_by(freq_type) |&gt;\n  slice_max(n_trips, n = 7) |&gt;\n  ungroup()\n\n# Join coordinates and plot as flow map with geom_curve\nedges_freq &lt;- od_freq |&gt;\n  left_join(sensor_coords, by = c(\"origin\" = \"sensor_name\")) |&gt;\n  rename(x_from = X, y_from = Y) |&gt;\n  left_join(sensor_coords, by = c(\"destination\" = \"sensor_name\")) |&gt;\n  rename(x_to = X, y_to = Y)\n\nggmap(base_map, darken = c(0.3, \"white\")) +\n  geom_curve(data = edges_freq,\n             aes(x = x_from, y = y_from, xend = x_to, yend = y_to,\n                 linewidth = n_trips, color = freq_type),\n             curvature = 0.25, alpha = 0.8,\n             arrow = arrow(length = unit(0.18, \"cm\"), type = \"closed\"),\n             inherit.aes = FALSE) +\n  facet_wrap(~ freq_type) +\n  labs(title = \"Primary Movement Corridors\",\n       subtitle = \"Both groups share main routes; regulars dominate dormitory paths\") +\n  theme_bw()",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Identity</span>"
+    ]
+  },
+  {
+    "objectID": "4-6-activities.html",
+    "href": "4-6-activities.html",
+    "title": "11  Activities",
+    "section": "",
+    "text": "11.1 Setup\nWhile Identity classifies who visits, Activities reveals what they do—specifically, whether they stay or pass through. This chapter detects stationary activities using spatial proximity: if consecutive detections remain within a distance threshold for 5+ minutes, we classify that segment as a “stay.”\nThe core insight: spatial stability signals activity. A device that lingers near the same sensors is likely engaged in stationary behavior—studying, dining, socializing. One that moves rapidly across distant sensors is passing through. By segmenting trajectories into stays and pass-throughs, we can map where activities concentrate and how they differ between visitor types.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Activities</span>"
+    ]
+  },
+  {
+    "objectID": "4-6-activities.html#setup",
+    "href": "4-6-activities.html#setup",
+    "title": "11  Activities",
+    "section": "",
+    "text": "Prepare data\nThis chapter uses the same dataset as Track and Identity: sample_main.zip. The ZIP contains WiFi detections from a 26-day campus deployment.\n\n\n\n\n\n\nNoteAbout the sample dataset\n\n\n\n\n\nPeriod: October 21 – November 15, 2019 (26 days) — spanning midterms, a campus interview event, and a school festival.\nLocation: UNIST campus, Ulsan, South Korea. 25 outdoor sensors covered dormitories, academic buildings, cafeteria, library, gym, and bus station.\nData structure:\n\n\n\n\n\n\n\n\nFile\nRows\nColumns\n\n\n\n\nwifi.parquet\n~11.4M\ntimestamp1, source_address, sensor_name\n\n\nsensors.gpkg\n25\nsensor_name, geom\n\n\npoi.gpkg\n5\nname, geom\n\n\n\nThe figures in this chapter use the full 26-day dataset.\n\n\n\n\n\nLoad packages and data\nLoad required packages using pacman::p_load(), which installs any missing packages automatically:\n\npacman::p_load(tidyverse, lubridate, arrow, sf)\n\nLoad the data files:\n\nwifi &lt;- read_parquet(\"../data/sample_main/wifi.parquet\") |&gt;\n  mutate(\n    timestamp1 = as_datetime(timestamp1),\n    date = as_date(timestamp1),\n    hour = hour(timestamp1)\n  ) |&gt;\n  filter(date &gt;= as_date(\"2019-10-21\"), date &lt;= as_date(\"2019-11-15\"))\n\nsensors &lt;- st_read(\"../data/sample_main/sensors.gpkg\", quiet = TRUE)\n\n\n\nExtract sensor coordinates\nFor distance calculations, we need sensor coordinates in a projected CRS (meters). We transform from WGS84 to UTM zone 52N:\n\nsensor_coords &lt;- sensors |&gt;\n  st_transform(32652) |&gt;\n  mutate(\n    x = st_coordinates(geometry)[, 1],\n    y = st_coordinates(geometry)[, 2]\n  ) |&gt;\n  st_drop_geometry()\n\n\n\n\n\n\n\nTipPreview sensor coordinates\n\n\n\n\n\n\nhead(sensor_coords, 5)\n\n        sensor_name        x         y\n1       bus_station 372918.5  3939761.2\n2 108_front_outside 372636.4  3939590.1\n3         206_front 372526.6  3939596.1\n4          112_side 372482.4  3939512.7\n5          104_back 372843.7  3939608.0",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Activities</span>"
+    ]
+  },
+  {
+    "objectID": "4-6-activities.html#stay-detection",
+    "href": "4-6-activities.html#stay-detection",
+    "title": "11  Activities",
+    "section": "11.2 Stay Detection",
+    "text": "11.2 Stay Detection\nWiFi trajectories consist of sequential detections across sensors. To identify stationary activities, we segment each trajectory based on spatial movement: when a device moves beyond the distance threshold between consecutive detections, we start a new segment. Segments lasting 5+ minutes are classified as “stays”—periods of stationary activity.\n\n\n\n\n\n%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e8f4f8', 'primaryTextColor': '#1a1a1a', 'primaryBorderColor': '#5c9ead', 'lineColor': '#5c9ead', 'secondaryColor': '#f0f7e6', 'tertiaryColor': '#fff5e6'}}}%%\nflowchart LR\n    A[WiFi&lt;br/&gt;Detections] --&gt; B[Segment by&lt;br/&gt;Spatial Movement]\n    B --&gt; C{Duration&lt;br/&gt;&gt;= 5 min?}\n    C --&gt;|Yes| D[Stay]\n    C --&gt;|No| E[Pass-through]\n\n    style A fill:#e8f4f8,stroke:#5c9ead\n    style D fill:#f0f7e6,stroke:#7cb342\n    style E fill:#fff5e6,stroke:#f9a825\n\n\n Stay detection workflow \n\n\n\n\nDefine trajectories\nWe first group detections into trajectories using a 30-minute gap threshold (same as Track). If a device isn’t detected for 30+ minutes, subsequent detections start a new trajectory:\n\ngap_threshold &lt;- 30  # minutes\n\ntrajectories &lt;- wifi |&gt;\n  arrange(source_address, timestamp1) |&gt;\n  group_by(source_address) |&gt;\n  mutate(\n    time_gap = as.numeric(difftime(timestamp1, lag(timestamp1), units = \"mins\")),\n    new_traj = is.na(time_gap) | time_gap &gt; gap_threshold,\n    traj_id = cumsum(new_traj)\n  ) |&gt;\n  ungroup()\n\n\n\nDefine thresholds\n\ndist_threshold &lt;- 150  # meters\ntime_threshold &lt;- 5    # minutes\n\nWe use 150 meters as the spatial threshold—approximately the outdoor detection range of WiFi sensors—and 5 minutes as the minimum stay duration following public life study conventions (Anderson et al., 2017; Gehl & Svarre, 2013).\n\n\n\n\n\n\nTipAdjusting thresholds\n\n\n\n\n\nThese values suit campus-scale deployments with ~100m sensor spacing:\n\n\n\nDeployment\nDistance threshold\nTime threshold\n\n\n\n\nCampus (~100m spacing)\n100–150m\n5–10 min\n\n\nDense urban (~50m spacing)\n50–100m\n3–5 min\n\n\nIndoor\n20–50m\n3–5 min\n\n\nLonger activities only\n150m\n10–15 min\n\n\n\nThe algorithm is based on Kang et al. (2005) and Li et al. (2008), who used similar time-clustering approaches for GPS stay point detection with distance thresholds of 50–200m and time thresholds of 10–30 minutes.\n\n\n\n\n\nCalculate distances and segment\nJoin sensor coordinates to each detection, then calculate the distance between consecutive detections. When movement exceeds the threshold, start a new segment:\n\ntraj_with_dist &lt;- trajectories |&gt;\n  left_join(sensor_coords, by = \"sensor_name\") |&gt;\n  group_by(source_address, traj_id) |&gt;\n  arrange(timestamp1, .by_group = TRUE) |&gt;\n  mutate(\n    x_prev = lag(x),\n    y_prev = lag(y),\n    dist = sqrt((x - x_prev)^2 + (y - y_prev)^2),\n    new_segment = is.na(dist) | dist &gt; dist_threshold,\n    segment_id = cumsum(new_segment)\n  ) |&gt;\n  ungroup()\n\n\n\n\n\n\n\nNoteHow segmentation works\n\n\n\n\n\nConsider a device moving across three sensors:\nDetection 1: Sensor A (x=100, y=200)\nDetection 2: Sensor A (x=100, y=200)  → dist = 0m    → same segment\nDetection 3: Sensor B (x=120, y=210)  → dist = 22m   → same segment\nDetection 4: Sensor C (x=300, y=400)  → dist = 265m  → NEW segment (&gt; 150m)\nDetection 5: Sensor C (x=300, y=400)  → dist = 0m    → same segment\nSegments 1 (detections 1–3) and 2 (detections 4–5) are evaluated separately for stay duration.\n\n\n\n\n\nClassify stays\nFor each segment, calculate duration and assign the primary sensor (most frequent). Segments with duration ≥ 5 minutes are classified as stays:\n\nstays &lt;- traj_with_dist |&gt;\n  group_by(source_address, traj_id, segment_id) |&gt;\n  summarise(\n    start_time = min(timestamp1),\n    end_time = max(timestamp1),\n    duration_mins = as.numeric(difftime(max(timestamp1), min(timestamp1), units = \"mins\")),\n    primary_sensor = names(which.max(table(sensor_name))),\n    n_detections = n(),\n    hour = first(hour),\n    date = first(date),\n    .groups = \"drop\"\n  ) |&gt;\n  mutate(\n    is_stay = duration_mins &gt;= time_threshold,\n    activity_type = case_when(\n      duration_mins &lt; time_threshold ~ \"Pass-through\",\n      duration_mins &lt; 30 ~ \"Medium stay (5-30 min)\",\n      TRUE ~ \"Long stay (30+ min)\"\n    )\n  )\n\nStay detection results:\n  Total segments: 2,232,701\n  Stays (&gt;=5min): 327,361 (14.7%)\n  Median stay duration: 20 mins\nOf 2.2 million trajectory segments, about 15% qualify as stays—periods where devices remained spatially stable for at least 5 minutes.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Activities</span>"
+    ]
+  },
+  {
+    "objectID": "4-6-activities.html#behavioral-patterns",
+    "href": "4-6-activities.html#behavioral-patterns",
+    "title": "11  Activities",
+    "section": "11.3 Behavioral Patterns",
+    "text": "11.3 Behavioral Patterns\n\nActivity type distribution\nMost segments (85%) are pass-throughs—brief movements across the sensor network. Among stays, medium-duration stays (5–30 min) are most common (9.3%), with long stays (30+ min) comprising 5.4%.\n\n\n\n\n\n\n\nNoteShow code\n\n\n\n\n\n\nactivity_dist &lt;- stays |&gt;\n  count(activity_type) |&gt;\n  mutate(\n    pct = n / sum(n) * 100,\n    activity_type = factor(activity_type,\n      levels = c(\"Pass-through\", \"Medium stay (5-30 min)\", \"Long stay (30+ min)\"))\n  )\n\nggplot(activity_dist, aes(activity_type, pct, fill = activity_type)) +\n  geom_col(width = 0.7) +\n  geom_text(aes(label = sprintf(\"%.1f%%\", pct)), vjust = -0.5, size = 3.5) +\n  scale_fill_manual(values = c(\n    \"Pass-through\" = \"gray55\",\n    \"Medium stay (5-30 min)\" = \"#f46d43\",\n    \"Long stay (30+ min)\" = \"#d73027\"\n  )) +\n  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +\n  labs(\n    title = \"Activity Type Distribution\",\n    subtitle = \"Most segments are pass-throughs; 15% involve stationary activity\",\n    x = NULL, y = \"Percentage (%)\"\n  ) +\n  theme_minimal() +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\nStay duration distribution\nAmong stays, most last 10–30 minutes—typical for meals, short meetings, or study sessions. About 23% last 30–60 minutes, and 14% exceed one hour, likely representing extended activities like classes or work sessions.\n\n\n\n\n\n\n\nNoteShow code\n\n\n\n\n\n\nstays_only &lt;- stays |&gt; filter(is_stay)\n\nduration_bins &lt;- stays_only |&gt;\n  mutate(\n    duration_bin = cut(\n      duration_mins,\n      breaks = c(5, 10, 15, 30, 60, 120, Inf),\n      labels = c(\"5-10\", \"10-15\", \"15-30\", \"30-60\", \"60-120\", \"120+\"),\n      right = FALSE\n    )\n  ) |&gt;\n  count(duration_bin) |&gt;\n  mutate(pct = n / sum(n) * 100)\n\nggplot(duration_bins, aes(duration_bin, pct)) +\n  geom_col(fill = \"#d73027\", width = 0.7) +\n  geom_text(aes(label = sprintf(\"%.0f%%\", pct)), vjust = -0.5, size = 3.5) +\n  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +\n  labs(\n    title = \"Stay Duration Distribution\",\n    subtitle = \"Most stays last 10-30 minutes; 14% exceed one hour\",\n    x = \"Duration (minutes)\", y = \"Percentage (%)\"\n  ) +\n  theme_minimal()\n\n\n\n\n\n\nTemporal patterns\nStay counts follow a clear daytime pattern, peaking during midday (11 AM–2 PM) when students and staff are on campus for classes, meals, and work. Counts drop sharply overnight (0–6 AM) when campus activity is minimal.\n\n\n\n\n\n\n\nNoteShow code\n\n\n\n\n\n\nhourly_stays &lt;- stays |&gt;\n  filter(is_stay) |&gt;\n  count(hour, name = \"n_stays\")\n\nggplot(hourly_stays, aes(hour, n_stays)) +\n  geom_col(fill = \"#d73027\", width = 0.8) +\n  scale_x_continuous(\n    breaks = seq(0, 23, by = 3),\n    labels = c(\"0\", \"3\", \"6\", \"9\", \"12\", \"15\", \"18\", \"21\")\n  ) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(\n    title = \"Hourly Stay Count\",\n    subtitle = \"Stays concentrate during daytime activity hours\",\n    x = \"Hour of Day\", y = \"Number of Stays\"\n  ) +\n  theme_minimal()\n\n\n\n\n\n\nSpatial patterns\nStay rates differ sharply by location. Academic buildings and dormitories show the highest stay rates (20–30%)—places where people work, study, or live. Transit points and corridors show low stay rates (5–10%)—places people pass through.\n\n\n\n\n\n\n\nNoteShow code\n\n\n\n\n\n\nsensor_activity &lt;- stays |&gt;\n  group_by(primary_sensor) |&gt;\n  summarise(\n    n_total = n(),\n    n_stays = sum(is_stay),\n    stay_rate = mean(is_stay) * 100,\n    .groups = \"drop\"\n  ) |&gt;\n  left_join(sensor_coords, by = c(\"primary_sensor\" = \"sensor_name\"))\n\n# For mapping, transform back to WGS84\nsensor_activity_sf &lt;- sensor_activity |&gt;\n  st_as_sf(coords = c(\"x\", \"y\"), crs = 32652) |&gt;\n  st_transform(4326)\n\n# Extract coordinates for ggplot\nsensor_activity &lt;- sensor_activity_sf |&gt;\n  mutate(\n    lon = st_coordinates(geometry)[, 1],\n    lat = st_coordinates(geometry)[, 2]\n  ) |&gt;\n  st_drop_geometry()\n\nggplot(sensor_activity, aes(lon, lat)) +\n  geom_point(aes(size = n_stays, color = stay_rate), alpha = 0.8) +\n  scale_size_continuous(range = c(2, 12), name = \"Stay count\") +\n  scale_color_gradient(low = \"#fee08b\", high = \"#d73027\", name = \"Stay rate (%)\") +\n  labs(\n    title = \"Spatial Distribution of Stays\",\n    subtitle = \"Dormitory and academic sensors show highest stay rates\"\n  ) +\n  coord_fixed() +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\nNoteInterpreting spatial patterns\n\n\n\n\n\nStay rates reveal location function:\n\n\n\nLocation type\nStay rate\nExamples\n\n\n\n\nAcademic buildings\n25–30%\nPC room, study halls\n\n\nDormitories\n20–25%\nResidential areas\n\n\nDining\n15–20%\nCafeteria\n\n\nRecreation\n10–15%\nLake, gym\n\n\nTransit/corridors\n5–10%\nBus station, pathways\n\n\n\nHigh stay rates indicate destination locations where people spend time. Low stay rates indicate transit locations people pass through.\n\n\n\n\n\nBy visitor type\nLinking stays to the Identity classification reveals expected patterns. Regulars show higher stay rates than one-time visitors, and their stays last longer.\n\n\n\n\n\n\n\nNoteShow code\n\n\n\n\n\n\n# Classify devices by visit frequency (same as Identity chapter)\ndevice_days &lt;- wifi |&gt;\n  group_by(source_address) |&gt;\n  summarise(n_days = n_distinct(date), .groups = \"drop\") |&gt;\n  mutate(\n    freq_type = case_when(\n      n_days == 1 ~ \"One-time\",\n      n_days &gt;= 20 ~ \"Regular\",\n      TRUE ~ \"Occasional\"\n    )\n  )\n\n# Join frequency type to stays\nstays_with_freq &lt;- stays |&gt;\n  left_join(\n    device_days |&gt; select(source_address, freq_type),\n    by = \"source_address\"\n  ) |&gt;\n  filter(freq_type %in% c(\"One-time\", \"Regular\"))\n\n# Calculate activity distribution by frequency type\nactivity_by_freq &lt;- stays_with_freq |&gt;\n  count(freq_type, activity_type) |&gt;\n  group_by(freq_type) |&gt;\n  mutate(pct = n / sum(n) * 100) |&gt;\n  ungroup() |&gt;\n  mutate(\n    activity_type = factor(activity_type,\n      levels = c(\"Pass-through\", \"Medium stay (5-30 min)\", \"Long stay (30+ min)\"))\n  )\n\nggplot(activity_by_freq, aes(activity_type, pct, fill = freq_type)) +\n  geom_col(position = \"dodge\", width = 0.7) +\n  scale_fill_manual(\n    values = c(\"One-time\" = \"#d7191c\", \"Regular\" = \"#2c7bb6\"),\n    name = NULL\n  ) +\n  labs(\n    title = \"Activity Types by Visitor Frequency\",\n    subtitle = \"Regulars show more long stays; one-time visitors mostly pass through\",\n    x = NULL, y = \"Percentage (%)\"\n  ) +\n  theme_minimal() +\n  theme(legend.position = \"top\")\n\n\n\n\n\n\n\n\n\n\nNoteInterpreting visitor patterns\n\n\n\n\n\n\n\n\nMetric\nOne-time\nRegular\n\n\n\n\nPass-through rate\n88%\n85%\n\n\nMedium stay (5–30 min)\n9%\n9%\n\n\nLong stay (30+ min)\n3%\n6%\n\n\nMedian stay duration\n10 min\n20 min\n\n\n\nRegulars (campus residents, staff) engage in more extended activities—they know the space and have reasons to linger. One-time visitors are predominantly transiting—they arrive, accomplish a brief task, and leave.\nThis pattern is consistent with the spatial findings in Identity: regulars concentrate at dormitories and dining halls; one-time visitors cluster at transit points.",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Activities</span>"
+    ]
+  },
+  {
+    "objectID": "4-6-activities.html#summary",
+    "href": "4-6-activities.html#summary",
+    "title": "11  Activities",
+    "section": "11.4 Summary",
+    "text": "11.4 Summary\nStay detection segments WiFi trajectories into stationary activities and pass-throughs based on spatial stability. The key parameters are:\n\n\n\nParameter\nDefault\nRationale\n\n\n\n\nGap threshold\n30 min\nSeparates distinct trajectories\n\n\nDistance threshold\n150 m\nApproximates sensor detection range\n\n\nTime threshold\n5 min\nPublic life study convention\n\n\n\nThe method reveals:\n\nWhere activities concentrate (academic buildings, dormitories &gt; transit points)\nWhen activities occur (daytime peak, overnight minimum)\nWho stays longer (regulars &gt; one-time visitors)\n\n\n\n\n\n\n\nWarningLimitations\n\n\n\nStay detection accuracy depends on sensor density and probe request frequency. In sparse sensor networks, short stays between sensors may be misclassified as pass-throughs. The 150m distance threshold assumes ~100m sensor spacing; adjust for your deployment.\nFor validation approaches using GPS ground truth, see Kang et al. (2005) and Li et al. (2008).",
+    "crumbs": [
+      "Extracting Metrics",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Activities</span>"
+    ]
+  },
+  {
+    "objectID": "6-conclusion.html",
+    "href": "6-conclusion.html",
+    "title": "13  Limitations and Future Directions",
+    "section": "",
+    "text": "13.1 Limitations\nThis toolkit demonstrates a complete WiFi sensing pipeline—from hardware deployment to urban metrics. However, several limitations affect data quality and interpretation. This chapter addresses them directly, particularly MAC address randomization, and outlines future directions for the field.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Limitations and Future Directions</span>"
+    ]
+  },
+  {
+    "objectID": "6-conclusion.html#limitations",
+    "href": "6-conclusion.html#limitations",
+    "title": "13  Limitations and Future Directions",
+    "section": "",
+    "text": "MAC Address Randomization\nThis is the most significant limitation. Modern smartphones randomize MAC addresses to protect user privacy. Apple introduced randomization in iOS 8 (2014), and Android followed in version 10 (2019). By 2020, most new devices broadcast random MACs by default.\nOur campus data was collected in October–November 2019, during the transition period: - Some devices still used persistent (real) MACs - Others had already adopted randomization - The proportion of randomized vs. persistent MACs is unknown\nImpact on metrics:\n\n\n\n\n\n\n\n\nMetric\nAffected?\nHow\n\n\n\n\nLocation\nMinimal\nSingle-detection positioning still works\n\n\nCount\nModerate\nRandomized MACs inflate unique device counts\n\n\nTrack\nModerate\nTrajectories may fragment when MAC changes\n\n\nIdentity\nSevere\nCannot reliably identify returning visitors\n\n\nActivities\nModerate\nStay detection within single trajectory works; cross-session analysis breaks\n\n\n\nWhat we can still measure: - Instantaneous density: How many devices are detected right now at a location - Flow patterns: Aggregate movement between sensors within short time windows - Temporal rhythms: When spaces are busy vs. quiet - Relative comparisons: Which locations attract more activity than others\nWhat becomes unreliable: - Absolute unique visitor counts over time - Individual-level return visit patterns - Long-term behavioral profiling\nThis limitation is not unique to our toolkit—it affects all passive WiFi sensing systems deployed after 2015. The field has largely pivoted to aggregate, anonymous metrics rather than individual tracking.\n\n\nSensor Coverage Gaps\nWiFi sensors detect devices within a limited range (~30–50 meters outdoors, less indoors). Areas between sensors are unobserved, creating coverage gaps. This affects:\n\nTrajectory completeness: Paths through unmonitored areas appear as gaps\nActivity detection: Stays in uncovered locations are missed\nSpatial resolution: We observe sensor locations, not exact device positions\n\nThe campus deployment used 25 sensors across ~0.5 km², providing reasonable but incomplete coverage of main circulation paths and activity centers.\n\n\nTemporal Resolution\nOur sensors logged detections at 1-second intervals, but WiFi probe requests are sporadic—devices don’t broadcast continuously. Detection gaps of 1–5 minutes are common even when devices remain stationary. This affects:\n\nPrecise timing: Entry/exit times have ~minute-level uncertainty\nShort activities: Stays under 3 minutes may be missed or misclassified\nMovement speed: Velocity estimates are approximate\n\n\n\nGround Truth Limitations\nWe validated location accuracy using 107 GPS ground truth points collected over 8 hours. While this confirms the basic approach works, it represents a small sample of controlled conditions. Real-world accuracy may vary with:\n\nCrowd density (signal interference)\nWeather conditions\nBuilding materials and geometry\nDevice heterogeneity\n\n\n\nPrivacy and Ethics\nWiFi sensing captures device identifiers without explicit consent. While we hash all MAC addresses (SHA-256) before analysis, ethical concerns remain:\n\nInformed consent: Passersby don’t know they’re being sensed\nDe-anonymization risk: Movement patterns could theoretically re-identify individuals\nRegulatory compliance: GDPR, CCPA, and similar laws may restrict deployment\n\nOur approach—hashing, aggregation, no individual profiles—aligns with privacy-preserving practices, but researchers should consult local regulations before deployment.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Limitations and Future Directions</span>"
+    ]
+  },
+  {
+    "objectID": "6-conclusion.html#future-directions",
+    "href": "6-conclusion.html#future-directions",
+    "title": "13  Limitations and Future Directions",
+    "section": "13.2 Future Directions",
+    "text": "13.2 Future Directions\n\nAdapting to Randomization\nMAC randomization is now universal. Future WiFi sensing must embrace this reality:\n\nAggregate-only metrics: Focus on counts, flows, and densities rather than individual tracking\nShort-window analysis: Analyze patterns within single sessions (typically 15–30 minutes before MAC rotation)\nComplementary data fusion: Combine WiFi with other sensors (Bluetooth, cameras, surveys) for richer context\nStatistical correction: Develop models to estimate true visitor counts from inflated randomized counts\n\nRecent research suggests randomization patterns contain exploitable structure (timing, sequence numbers) that may allow session linking without violating privacy. This remains an active research area.\n\n\nHardware Improvements\nThe Raspberry Pi platform used here is accessible but limited:\n\nMulti-channel scanning: Current setup monitors one WiFi channel; multi-adapter setups could capture more devices\nDirectional antennas: Could improve spatial resolution and range\nEdge processing: On-device aggregation could reduce data volume and enhance privacy\nPower optimization: Solar or battery operation would enable truly remote deployments\n\n\n\nSoftware Extensions\nThis toolkit provides foundational metrics. Extensions could include:\n\nReal-time dashboards: Live visualization of space usage\nAnomaly detection: Automatic flagging of unusual patterns\nPredictive models: Forecasting crowd levels from historical patterns\nAPI integration: Connecting to building management or transit systems\n\n\n\nValidation Methods\nBetter ground truth is needed:\n\nAutomated validation: Using entry counters, turnstiles, or cameras\nControlled experiments: Lab studies with known device populations\nCross-validation: Comparing WiFi estimates with survey or census data",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Limitations and Future Directions</span>"
+    ]
+  },
+  {
+    "objectID": "6-conclusion.html#summary",
+    "href": "6-conclusion.html#summary",
+    "title": "13  Limitations and Future Directions",
+    "section": "13.3 Summary",
+    "text": "13.3 Summary\nWiFi sensing offers a low-cost, scalable approach to measuring human activity in urban spaces. This toolkit demonstrates the complete pipeline: building sensors, processing data, and extracting five urban metrics—Location, Count, Track, Identity, and Activities.\nThe approach works best for: - Understanding temporal patterns of space usage - Comparing relative activity levels between locations - Detecting aggregate flows and movement patterns - Rapid, low-cost deployment in diverse settings\nIt works less well for: - Precise individual tracking (due to MAC randomization) - Absolute visitor counts (without calibration) - Fine-grained spatial positioning (compared to GPS or UWB)\nDespite limitations, passive WiFi sensing remains valuable for urban research. The key is matching the method to appropriate questions—aggregate patterns rather than individual behaviors—and being transparent about what the data can and cannot tell us.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Limitations and Future Directions</span>"
+    ]
+  }
+]

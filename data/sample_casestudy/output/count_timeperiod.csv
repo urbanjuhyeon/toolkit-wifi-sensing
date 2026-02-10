@@ -1,0 +1,15 @@
+time_period,street_type,unique_devices,n_sensors,devices_per_sensor,pct
+Morning Rush,Regular,15969,13,1228.38461538462,11.4
+Late Morning,Regular,15394,13,1184.15384615385,11
+Lunch,Regular,25781,13,1983.15384615385,18.4
+Afternoon,Regular,28534,13,2194.92307692308,20.3
+Evening,Regular,32430,13,2494.61538461539,23.1
+Night,Regular,15666,13,1205.07692307692,11.2
+Early Morning,Regular,6500,13,500,4.6
+Morning Rush,Pedestrian,10049,7,1435.57142857143,10.3
+Late Morning,Pedestrian,9994,7,1427.71428571429,10.3
+Lunch,Pedestrian,17869,7,2552.71428571429,18.4
+Afternoon,Pedestrian,19393,7,2770.42857142857,20
+Evening,Pedestrian,23446,7,3349.42857142857,24.1
+Night,Pedestrian,11645,7,1663.57142857143,12
+Early Morning,Pedestrian,4803,7,686.142857142857,4.9

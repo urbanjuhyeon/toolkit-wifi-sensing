@@ -1,0 +1,7 @@
+street_type,stay_type,N,pct
+Regular,Long,127909,23.8
+Regular,Passing,363828,67.8
+Regular,Short,44843,8.4
+Pedestrian,Long,58913,26.7
+Pedestrian,Short,19301,8.8
+Pedestrian,Passing,142231,64.5
