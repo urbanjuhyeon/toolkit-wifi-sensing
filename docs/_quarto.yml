@@ -9,8 +9,8 @@ book:
   sidebar:
     collapse-level: 2
     pinned: true
-  site-url: https://urbanjuhyeon.github.io/toolkit-wifi-sensing-for-urban-studies/
-  repo-url: https://github.com/urbanjuhyeon/toolkit-wifi-sensing-for-urban-studies/
+  site-url: https://urbanjuhyeon.github.io/urban-wifi-sensing-toolkit/
+  repo-url: https://github.com/urbanjuhyeon/urban-wifi-sensing-toolkit/
   date: last-modified
   chapters:
     - index.qmd
